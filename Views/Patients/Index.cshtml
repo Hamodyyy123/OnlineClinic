@@ -1,0 +1,113 @@
+﻿@model IEnumerable<OnlineClinic.Models.Patient>
+@{
+    ViewData["Title"] = "Patient List";
+    var canManage = ViewBag.CanManage ?? false;
+    var doctors = ViewBag.Doctors as List<OnlineClinic.Models.User>;
+}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+
+<h2>Patient List</h2>
+
+@if (canManage)
+{
+    <button class="btn btn-primary mb-3" onclick="openCreatePatientModal()">Add New Patient</button>
+}
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Age</th>
+            <th>Gender</th>
+            <th>Contact</th>
+            <th>Room</th>
+            <th>Admission Date</th>
+            <th>Doctor</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var p in Model)
+        {
+            var doc = doctors?.FirstOrDefault(d => d.UserId == p.AssignedDoctor);
+            <tr>
+                <td>@p.Name</td>
+                <td>@p.Age</td>
+                <td>@p.Gender</td>
+                <td>@p.ContactInfo</td>
+                <td>@p.RoomNumber</td>
+                <td>@(p.AdmissionDate?.ToString("yyyy-MM-dd") ?? "")</td>
+                <td>@(doc?.Name ?? "")</td>
+                <td>
+                    <a class="btn btn-info btn-sm" href="@Url.Action("Details", "Patients", new { id = p.PatientId })">Details</a>
+                    @if (canManage)
+                    {
+                        <button class="btn btn-warning btn-sm" onclick="openEditPatientModal(@p.PatientId)">Edit</button>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<!-- Add/Edit Patient Modal -->
+<div class="modal fade" id="patientModal" tabindex="-1" aria-labelledby="patientModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form id="patientForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="patientModalLabel">Patient</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="modal-error" class="alert alert-danger d-none"></div>
+                    <input type="hidden" id="modalPatientId" name="PatientId" />
+                    <input type="hidden" id="modalUserId" name="UserId" />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <label>Name</label>
+                            <input class="form-control" id="userName" name="userName" required />
+                            <label>Email</label>
+                            <input class="form-control" id="userEmail" name="userEmail" required />
+                            <label>Username</label>
+                            <input class="form-control" id="userUsername" name="userUsername" required />
+                            <label>Password</label>
+                            <input type="password" class="form-control" id="userPassword" name="userPassword" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label>Age</label>
+                            <input type="number" class="form-control" id="patientAge" name="patientAge" />
+                            <label>Gender</label>
+                            <select class="form-control" id="patientGender" name="patientGender">
+                                <option value="">Select</option>
+                                <option value="Male">Male</option>
+                                <option value="Female">Female</option>
+                            </select>
+                            <label>Contact Info</label>
+                            <input class="form-control" id="patientContactInfo" name="patientContactInfo" />
+                            <label>Emergency Contact</label>
+                            <input class="form-control" id="patientEmergencyContact" name="patientEmergencyContact" />
+                            <label>Room Number</label>
+                            <input class="form-control" id="patientRoomNumber" name="patientRoomNumber" />
+                            <label>Admission Date</label>
+                            <input type="date" class="form-control" id="patientAdmissionDate" name="patientAdmissionDate" />
+                            <label>Doctor</label>
+                            <select class="form-control" id="assignedDoctor" name="assignedDoctor">
+                                @foreach (var d in doctors ?? new List<OnlineClinic.Models.User>())
+                                {
+                                    <option value="@d.UserId">@d.Name</option>
+                                }
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" id="modalSaveBtn" class="btn btn-success">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/js/patient.js"></script>

@@ -1,0 +1,29 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
+
+namespace OnlineClinic.Models;
+
+[Table("role_permission")]
+public partial class RolePermission
+{
+    [Key]
+    [Column("id")]
+    public int Id { get; set; }
+
+    [Column("role_id")]
+    public int? RoleId { get; set; }
+
+    [Column("permission_id")]
+    public int? PermissionId { get; set; }
+
+    [ForeignKey("PermissionId")]
+    [InverseProperty("RolePermissions")]
+    public virtual Permission? Permission { get; set; }
+
+    [ForeignKey("RoleId")]
+    [InverseProperty("RolePermissions")]
+    public virtual UserRole? Role { get; set; }
+}

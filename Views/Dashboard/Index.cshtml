@@ -1,0 +1,13 @@
+﻿@{
+    ViewData["Title"] = "Dashboard";
+}
+@section Scripts {
+    <script>
+        window.currentUserRole = '@ViewBag.UserRole';
+    </script>
+    <script src="~/js/Dashboard.js"></script>
+}
+<div class="dashboard">
+    <div id="notifications-widget"></div>
+    <div id="dashboard-widgets"></div>
+</div>

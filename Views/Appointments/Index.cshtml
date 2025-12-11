@@ -1,0 +1,108 @@
+﻿@* Views/Appointments/Index.cshtml *@
+@using System.Security.Claims
+@{
+    ViewData["Title"] = "Appointments";
+}
+<h2>Appointments</h2>
+
+<form id="apptsFilterForm" class="row g-2 mb-3">
+    <div class="col-md-2">
+        <input type="date" id="filterDate" class="form-control" />
+    </div>
+    <div class="col-md-3">
+        <select id="filterDoctor" class="form-control"></select>
+    </div>
+
+    <!-- Wrap patient filter so JS can hide the whole block for patient role -->
+    <div class="col-md-3 filter-patient-wrapper">
+        <select id="filterPatient" class="form-control"></select>
+    </div>
+
+    <div class="col-md-2">
+        <button class="btn btn-secondary" type="submit">Filter</button>
+        <button class="btn btn-outline-primary" type="button" id="apptsRefreshBtn">Refresh</button>
+    </div>
+    <div class="col-md-2 text-end">
+        <button class="btn btn-success" type="button" id="apptAddBtn">Add Appointment</button>
+    </div>
+</form>
+
+<table class="table table-bordered" id="apptsMainTable">
+    <thead>
+        <tr>
+            <th>Doctor</th>
+            <!-- Give patient header an id so JS can hide it for patient role -->
+            <th id="thPatient">Patient</th>
+            <th>Start</th>
+            <th>End</th>
+            <th>Status</th>
+            <th>Notes</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="apptsTableBody"></tbody>
+</table>
+
+<!-- Appointment Modal -->
+<div class="modal fade" id="apptModal" tabindex="-1" aria-labelledby="apptModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="apptForm">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="apptModalLabel">Book/Add Appointment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="appt-error" class="alert alert-danger d-none"></div>
+                    <input type="hidden" id="apptId" />
+
+                    <div class="mb-2">
+                        <label for="apptDoctor">Doctor</label>
+                        <select id="apptDoctor" class="form-control"></select>
+                    </div>
+
+                    <!-- This row will be hidden in JS for patient role -->
+                    <div class="mb-2 appt-patient-row">
+                        <label for="apptPatient">Patient</label>
+                        <select id="apptPatient" class="form-control"></select>
+                    </div>
+
+                    <div class="mb-2">
+                        <label for="apptStart">Start Time</label>
+                        <input type="datetime-local" id="apptStart" class="form-control" required />
+                    </div>
+                    <div class="mb-2">
+                        <label for="apptEnd">End Time</label>
+                        <input type="datetime-local" id="apptEnd" class="form-control" required />
+                    </div>
+                    <div class="mb-2">
+                        <label for="apptStatus">Status</label>
+                        <select id="apptStatus" class="form-control">
+                            <option value="Booked">Booked</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                    <div class="mb-2">
+                        <label for="apptNotes">Notes</label>
+                        <textarea id="apptNotes" class="form-control"></textarea>
+                    </div>
+                    <div class="mb-2" id="doctorSlots"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="apptSaveBtn" class="btn btn-success">Save</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Use the same claim type as the controller (ClaimTypes.Role)
+    window.AppUserRole = '@User.FindFirst(ClaimTypes.Role)?.Value';
+    console.log("AppUserRole from server:", window.AppUserRole);
+</script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/js/Appointment.js"></script>
