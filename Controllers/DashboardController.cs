@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using OnlineClinic.Models;
 using System;
 using System.Linq;
@@ -24,23 +25,75 @@ namespace OnlineClinic.Controllers
             return View();
         }
 
+        // ============ ADMIN DASHBOARD ============
+
         [HttpGet]
         public IActionResult GetAdminData()
         {
+            var today = DateTime.Today;
+            var firstOfMonth = new DateTime(today.Year, today.Month, 1);
+
             int doctorCount = _db.Users.Count(u => u.Role == "Doctor");
             int patientCount = _db.Users.Count(u => u.Role == "Patient");
-            int appointmentsToday = _db.Appointments.Count(a => a.StartTime.Date == DateTime.Today);
 
-            var alerts = new[]
+            // New users this month
+            int newUsersThisMonth = _db.Users.Count(u => u.CreatedAt >= firstOfMonth);
+
+            // All appointments for today (not just count)
+            var appointmentsToday = _db.Appointments
+                .Include(a => a.Doctor)
+                .Include(a => a.Patient)
+                .Where(a => a.StartTime.Date == today)
+                .OrderBy(a => a.StartTime)
+                .Select(a => new
+                {
+                    StartTime = a.StartTime,
+                    EndTime = a.EndTime,
+                    DoctorName = a.Doctor.Name,
+                    PatientName = a.Patient.Name,
+                    Notes = a.Notes
+                })
+                .ToList();
+
+            int appointmentsTodayCount = appointmentsToday.Count;
+
+            // Highest working doctor: doctor with the most appointments (overall)
+            var highestWorkingDoctor = _db.Appointments
+                .GroupBy(a => a.DoctorId)
+                .OrderByDescending(g => g.Count())
+                .Select(g => new
+                {
+                    DoctorId = g.Key,
+                    AppointmentsCount = g.Count()
+                })
+                .FirstOrDefault();
+
+            string topDoctorName = null;
+            int topDoctorAppointments = 0;
+
+            if (highestWorkingDoctor != null)
             {
-                "2 licenses expire this month.",
-                "New user registration pending approval."
+                topDoctorName = _db.Doctors
+                    .Where(d => d.DoctorId == highestWorkingDoctor.DoctorId)
+                    .Select(d => d.Name)
+                    .FirstOrDefault();
+                topDoctorAppointments = highestWorkingDoctor.AppointmentsCount;
+            }
+
+            var stats = new
+            {
+                doctors = doctorCount,
+                patients = patientCount,
+                appointmentsToday = appointmentsTodayCount,
+                newUsersThisMonth,
+                highestWorkingDoctorName = topDoctorName,
+                highestWorkingDoctorAppointments = topDoctorAppointments
             };
 
             var result = new
             {
-                stats = new { doctors = doctorCount, patients = patientCount, appointmentsToday },
-                alerts,
+                stats,
+                appointmentsToday,
                 links = new
                 {
                     doctorsList = Url.Action("Index", "Doctors"),
@@ -51,31 +104,45 @@ namespace OnlineClinic.Controllers
             return Json(result);
         }
 
+        // ============ DOCTOR DASHBOARD ============
+
         [HttpGet]
         public IActionResult GetDoctorData()
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
+            // Find doctor's DoctorId from Users.UserId
+            var doctor = _db.Doctors.FirstOrDefault(d => d.UserId == userId);
+            if (doctor == null)
+            {
+                return Json(new { });
+            }
+            int doctorId = doctor.DoctorId;
+
             // 2 upcoming appointments
             var upcomingAppointments = _db.Appointments
-                .Where(a => a.DoctorId == userId && a.StartTime >= DateTime.Now)
+                .Include(a => a.Patient)
+                .Where(a => a.DoctorId == doctorId && a.StartTime >= DateTime.Now)
                 .OrderBy(a => a.StartTime)
                 .Take(2)
                 .Select(a => new
                 {
                     Time = a.StartTime.ToShortTimeString(),
-                    Patient = _db.Patients.Where(p => p.PatientId == a.PatientId).Select(p => p.Name).FirstOrDefault(),
+                    Span = $"{a.StartTime:t} - {a.EndTime:t}",
+                    Patient = a.Patient.Name,
                     Description = a.Notes
                 }).ToList();
 
-            // Today's schedule
+            // Today's schedule (with time span)
             var todaysSchedule = _db.Appointments
-                .Where(a => a.DoctorId == userId && a.StartTime.Date == DateTime.Today)
+                .Include(a => a.Patient)
+                .Where(a => a.DoctorId == doctorId && a.StartTime.Date == DateTime.Today)
                 .OrderBy(a => a.StartTime)
                 .Select(a => new
                 {
                     Time = a.StartTime.ToShortTimeString(),
-                    Patient = _db.Patients.Where(p => p.PatientId == a.PatientId).Select(p => p.Name).FirstOrDefault(),
+                    Span = $"{a.StartTime:t} - {a.EndTime:t}",
+                    Patient = a.Patient.Name,
                     Description = a.Notes
                 }).ToList();
 
@@ -87,8 +154,29 @@ namespace OnlineClinic.Controllers
                 .Take(5)
                 .ToList();
 
-            // Assigned Patients
-            int assignedPatients = _db.Patients.Count(p => p.UserId == userId);
+            // Show also if there is a consultation running now
+            var now = DateTime.Now;
+            var runningConsultations = _db.Consultations
+                .Include(c => c.Appointment)
+                .Where(c =>
+                    c.DoctorId == doctorId &&
+                    c.Status == "Open" &&
+                    c.Appointment.StartTime <= now &&
+                    c.Appointment.EndTime >= now)
+                .Select(c => new
+                {
+                    c.ConsultationId,
+                    c.AppointmentId
+                })
+                .ToList();
+
+            if (runningConsultations.Any())
+            {
+                notifList.Insert(0, "A consultation is running now. Click to open.");
+            }
+
+            // Assigned Patients (patients whose AssignedDoctor == this doctor)
+            int assignedPatients = _db.Patients.Count(p => p.AssignedDoctor == doctorId);
 
             var result = new
             {
@@ -99,36 +187,47 @@ namespace OnlineClinic.Controllers
                 links = new
                 {
                     medicalHistory = Url.Action("Index", "Patients"),
-                    prescriptions = Url.Action("Index", "MedicalNotes")
+                    consultations = Url.Action("Index", "Consultations")
                 }
             };
             return Json(result);
         }
+
+        // ============ PATIENT DASHBOARD ============
 
         [HttpGet]
         public IActionResult GetPatientData()
         {
             int userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value);
 
-            var patient = _db.Patients.FirstOrDefault(p => p.UserId == userId);
+            var patient = _db.Patients
+                .Include(p => p.AssignedDoctorNavigation)
+                .FirstOrDefault(p => p.UserId == userId);
 
+            if (patient == null)
+                return Json(new { });
+
+            // Next appointment with time span
             var nextAppointment = _db.Appointments
+                .Include(a => a.Doctor)
                 .Where(a => a.PatientId == patient.PatientId && a.StartTime >= DateTime.Now)
                 .OrderBy(a => a.StartTime)
                 .Select(a => new
                 {
                     Date = a.StartTime.ToShortDateString(),
                     Time = a.StartTime.ToShortTimeString(),
-                    Doctor = _db.Users.Where(u => u.UserId == a.DoctorId).Select(u => u.Name).FirstOrDefault(),
+                    Span = $"{a.StartTime:t} - {a.EndTime:t}",
+                    Doctor = a.Doctor.Name,
                     Description = a.Notes
                 })
                 .FirstOrDefault();
 
-            var assignedDoctor = _db.Users
-                .Where(u => u.Role == "Doctor" && u.UserId == patient.UserId)
-                .Select(u => new { Name = u.Name })
-                .FirstOrDefault();
+            // Assigned doctor (from AssignedDoctorNavigation)
+            var assignedDoctor = patient.AssignedDoctorNavigation != null
+                ? new { Name = patient.AssignedDoctorNavigation.Name }
+                : null;
 
+            // Notifications
             var notifs = _db.Notifications
                 .Where(n => n.UserId == userId)
                 .OrderByDescending(n => n.NotificationId)
@@ -143,9 +242,8 @@ namespace OnlineClinic.Controllers
                 notifications = notifs,
                 links = new
                 {
-                    requestAppointment = "#", // Add real link for request feature
-                    medicalHistory = Url.Action("History", "MedicalHistory"),
-                    prescriptions = Url.Action("Index", "MedicalNotes")
+                    requestAppointment = Url.Action("Index", "Appointments"),
+                    medicalHistory = Url.Action("Details", "Patients", new { id = patient.PatientId })
                 }
             };
             return Json(result);

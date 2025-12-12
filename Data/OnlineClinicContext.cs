@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
+using OnlineClinic.Models;
 
-namespace OnlineClinic.Models;
+namespace OnlineClinic.Data;
 
 public partial class OnlineClinicContext : DbContext
 {

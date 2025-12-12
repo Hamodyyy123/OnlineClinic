@@ -12,46 +12,94 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-0">
             <div class="container-fluid">
                 <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">OnlineClinic</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <li class="nav-item">
-                                <form asp-area="" asp-controller="Login" asp-action="Logout" method="post" class="d-inline">
-                                    @Html.AntiForgeryToken()
-                                    <button type="submit" class="btn btn-link nav-link" style="display:inline;cursor:pointer;">Logout</button>
-                                </form>
-                            </li>
-                        }
-                    </ul>
+
+                <div class="d-flex ms-auto">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <span class="navbar-text me-3">
+                            @User.Identity.Name
+                        </span>
+                        <form asp-area="" asp-controller="Login" asp-action="Logout" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-outline-danger btn-sm">Logout</button>
+                        </form>
+                    }
                 </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+
+    <div class="d-flex" id="layout-wrapper">
+        @if (User.Identity.IsAuthenticated)
+        {
+            bool isDoctor = User.IsInRole("Doctor");
+            bool isPatient = User.IsInRole("Patient");
+
+            <nav id="sidebar" class="bg-light border-end">
+                <ul class="nav flex-column sidebar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Dashboard" asp-action="Index">
+                            Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Appointments" asp-action="Index">
+                            Appointments
+                        </a>
+                    </li>
+
+                    @* Doctors link: hidden for Doctor role *@
+                    @if (!isDoctor)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Doctors" asp-action="Index">
+                                Doctors
+                            </a>
+                        </li>
+                    }
+
+                    @* Patients link: hidden for Patient role *@
+                    @if (!isPatient)
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Patients" asp-action="Index">
+                                Patients
+                            </a>
+                        </li>
+                    }
+
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Consultations" asp-action="Index">
+                            Consultations
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-controller="Profile" asp-action="Index">
+                            Profile
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        }
+
+        <div class="flex-grow-1" id="content-wrapper">
+            <div class="container-fluid pt-3">
+                <main role="main" class="pb-3">
+                    @RenderBody()
+                </main>
+            </div>
+
+            <footer class="border-top footer text-muted mt-auto">
+                <div class="container">
+                    &copy; 2025 - OnlineClinic
+                </div>
+            </footer>
+        </div>
     </div>
 
-    <footer class="border-top footer text-muted">
-        <div class="container">
-            &copy; 2025 - OnlineClinic - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>

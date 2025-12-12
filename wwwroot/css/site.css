@@ -20,3 +20,40 @@ html {
 body {
   margin-bottom: 60px;
 }
+/* Layout with sidebar */
+#layout-wrapper {
+    min-height: 100vh;
+}
+
+/* Sidebar style */
+#sidebar {
+    width: 220px;
+    min-height: calc(100vh - 56px); /* 56px ~ navbar height */
+}
+
+.sidebar-nav .nav-link {
+    padding: 0.75rem 1rem;
+    color: #333;
+}
+
+    .sidebar-nav .nav-link:hover {
+        background-color: #e9ecef;
+        color: #000;
+    }
+
+#content-wrapper {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Small screens: stack sidebar on top */
+@media (max-width: 767.98px) {
+    #layout-wrapper {
+        flex-direction: column;
+    }
+
+    #sidebar {
+        width: 100%;
+        min-height: auto;
+    }
+}
