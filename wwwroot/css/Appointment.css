@@ -1,0 +1,312 @@
+﻿/* ========== Appointments Page Custom Styles ========== */
+
+.appts-page-wrapper {
+    min-height: 100vh;
+    background: var(--bg-secondary);
+    padding-bottom: var(--space-16);
+}
+
+/* Hero / Header */
+
+.appts-hero {
+    position: relative;
+    overflow: hidden;
+    padding: var(--space-12) 0 var(--space-10);
+    margin-bottom: var(--space-8);
+}
+
+.appts-hero-bg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--primary-600) 0%, var(--primary-500) 40%, var(--accent-500) 100%);
+    opacity: 0.95;
+}
+
+.appts-hero-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-8);
+    color: var(--text-inverse);
+}
+
+.appts-hero-text h1 {
+    font-size: var(--font-size-4xl);
+    font-weight: var(--font-extrabold);
+    margin-bottom: var(--space-3);
+}
+
+.appts-hero-text p {
+    color: rgba(255, 255, 255, 0.85);
+    max-width: 520px;
+    margin: 0;
+}
+
+.appts-hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+}
+
+.appts-stat-card {
+    min-width: 120px;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-lg);
+    background: rgba(15, 23, 42, 0.25);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+}
+
+.appts-stat-label {
+    display: block;
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.8;
+    margin-bottom: var(--space-1);
+}
+
+.appts-stat-value {
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-bold);
+}
+
+/* Main section */
+
+.appts-main {
+    position: relative;
+    z-index: 2;
+}
+
+/* Filter Card */
+
+.appts-filter-card {
+    margin-bottom: var(--space-6);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-md);
+}
+
+.appts-filter-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-6);
+    background: linear-gradient(135deg, var(--primary-50), var(--accent-50));
+    border-bottom: 1px solid var(--primary-100);
+}
+
+    .appts-filter-header h3 {
+        margin: 0;
+        font-size: var(--font-size-xl);
+        color: var(--primary-700);
+    }
+
+.appts-filter-subtitle {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+.appts-header-actions {
+    display: flex;
+    gap: var(--space-2);
+}
+
+.appts-filter-form {
+    align-items: flex-end;
+}
+
+.appts-label {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-medium);
+    color: var(--text-secondary);
+    margin-bottom: var(--space-1);
+}
+
+.appts-filter-buttons {
+    display: flex;
+    align-items: flex-end;
+}
+
+/* custom button variants used here (work with your design system) */
+.btn-outline {
+    background: transparent;
+    color: var(--primary-600);
+    border: 1px solid var(--primary-200);
+}
+
+    .btn-outline:hover {
+        background: var(--primary-50);
+    }
+
+.btn-sm {
+    padding: var(--space-2) var(--space-4);
+    font-size: var(--font-size-sm);
+}
+
+/* Table Card */
+
+.appts-table-card {
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-md);
+}
+
+.appts-table-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: var(--space-4);
+    border-bottom: 1px solid var(--gray-200);
+}
+
+    .appts-table-header h3 {
+        margin: 0;
+        font-size: var(--font-size-lg);
+    }
+
+.appts-table-meta {
+    font-size: var(--font-size-sm);
+    color: var(--text-tertiary);
+}
+
+.appts-table-wrapper {
+    padding: var(--space-5);
+}
+
+/* Table styling */
+
+.appts-table thead {
+    background: var(--bg-tertiary);
+}
+
+.appts-table th {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-semibold);
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom-color: var(--gray-200);
+}
+
+.appts-table td {
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    vertical-align: middle;
+}
+
+.appts-table tbody tr {
+    transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+    .appts-table tbody tr:hover {
+        background-color: var(--primary-50);
+        transform: translateY(-1px);
+    }
+
+.appts-actions-col {
+    width: 140px;
+}
+
+/* Status pills */
+
+.appts-status-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.15rem 0.55rem;
+    border-radius: 999px;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-medium);
+}
+
+.appts-status-booked {
+    background: #e0f2fe;
+    color: #0369a1;
+}
+
+.appts-status-completed {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.appts-status-cancelled {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+/* Modal */
+
+.appts-modal-dialog {
+    max-width: 720px;
+}
+
+.appts-modal-content {
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-2xl);
+}
+
+.appts-modal-header {
+    border-bottom: 1px solid var(--gray-200);
+    background: var(--bg-tertiary);
+}
+
+    .appts-modal-header h5 {
+        margin-bottom: var(--space-1);
+    }
+
+.appts-modal-subtitle {
+    margin: 0;
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+.appts-modal-footer {
+    border-top: 1px solid var(--gray-200);
+}
+
+/* Doctor slots */
+
+.appts-slots-box {
+    margin-top: var(--space-2);
+    padding: var(--space-3);
+    border-radius: var(--radius-lg);
+    background: var(--bg-secondary);
+    font-size: var(--font-size-sm);
+    max-height: 180px;
+    overflow-y: auto;
+}
+
+/* Responsive tweaks */
+
+@media (max-width: 992px) {
+    .appts-hero-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .appts-hero-meta {
+        margin-top: var(--space-4);
+    }
+}
+
+@media (max-width: 768px) {
+    .appts-filter-header {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .appts-header-actions {
+        width: 100%;
+        justify-content: flex-start;
+        flex-wrap: wrap;
+    }
+
+        .appts-header-actions .btn {
+            flex: 1 0 auto;
+        }
+
+    .appts-filter-form {
+        row-gap: var(--space-2);
+    }
+}

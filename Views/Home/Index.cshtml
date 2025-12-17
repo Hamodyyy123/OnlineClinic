@@ -1,8 +1,165 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MediConnect - Online Doctor Consultation</title>
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+    <!-- Absolute paths so the browser requests /css/... directly -->
+    <link rel="stylesheet" href="/css/consultation-style.css" />
+</head>
+<body>
+    <!-- Scroll to Top Button -->
+    <button id="scrollTopBtn" class="scroll-top-btn" title="Go to top">↑</button>
+
+    <!-- Removed client-side login modal so Login link always redirects to /Login/Index -->
+    <!-- Booking Modal (kept) -->
+    <div id="bookingModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Book Your Consultation</h2>
+            <form id="bookingForm" class="modal-form" action="/Home/Book" method="post">
+                <input type="text" id="patientName" name="patientName" placeholder="Your Name" required />
+                <input type="email" id="patientEmail" name="patientEmail" placeholder="Email Address" required />
+                <input type="tel" id="patientPhone" name="patientPhone" placeholder="Phone Number" required />
+                <select id="doctorSelect" name="doctorSelect" required>
+                    <option value="">Select a Doctor</option>
+                    <option value="Dr. Ahmed Hassan">Dr. Ahmed Hassan - General Physician</option>
+                    <option value="Dr. Sarah Ali">Dr. Sarah Ali - Pediatrician</option>
+                    <option value="Dr. Mohammed Khalil">Dr. Mohammed Khalil - Cardiologist</option>
+                </select>
+                <input type="date" id="appointmentDate" name="appointmentDate" required />
+                <select id="appointmentTime" name="appointmentTime" required>
+                    <option value="">Select Time</option>
+                    <option value="09:00 AM">09:00 AM</option>
+                    <option value="10:00 AM">10:00 AM</option>
+                    <option value="11:00 AM">11:00 AM</option>
+                    <option value="02:00 PM">02:00 PM</option>
+                    <option value="03:00 PM">03:00 PM</option>
+                    <option value="04:00 PM">04:00 PM</option>
+                </select>
+                <textarea id="appointmentReason" name="appointmentReason" placeholder="Reason for consultation" rows="3" required></textarea>
+                <button type="submit" class="btn-primary">Confirm Booking</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success Message -->
+    <div id="successMessage" class="success-message" style="display:none;"><span id="successText">Success!</span></div>
+
+    <!-- Header/Navigation -->
+    <header>
+        <nav class="navbar">
+            <div class="logo"><h1>MediConnect</h1></div>
+            <ul class="nav-links">
+                <li><a href="/Home/Index" class="active">Home</a></li>
+                <li><a href="/Home/Services">Services</a></li>
+                <li><a href="/Home/Doctors">Doctors</a></li>
+                <li><a href="/Home/About">About</a></li>
+                <li><a href="/Home/Contact">Contact</a></li>
+            </ul>
+
+            <!-- Login redirects to /Login/Index -->
+            <a href="/Login/Index" class="login-btn">Login</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h2>Your Health, Our Priority</h2>
+            <p>Connect with certified doctors online from the comfort of your home</p>
+            <div class="hero-buttons">
+                <a id="heroBookBtn" href="/Home/Doctors" class="btn-primary" role="button">Book Consultation</a>
+                <a id="learnMoreBtn" href="/Home/Services" class="btn-secondary" role="button">Learn More</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <div class="placeholder-image"><p>👨‍⚕️</p></div>
+        </div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works">
+        <h2>How It Works</h2>
+        <div class="steps">
+            <div class="step">
+                <div class="step-number">1</div>
+                <h3>Sign Up</h3>
+                <p>Create your account in minutes</p>
+            </div>
+            <div class="step">
+                <div class="step-number">2</div>
+                <h3>Choose Doctor</h3>
+                <p>Select from our qualified specialists</p>
+            </div>
+            <div class="step">
+                <div class="step-number">3</div>
+                <h3>Book Appointment</h3>
+                <p>Pick a convenient time slot</p>
+            </div>
+            <div class="step">
+                <div class="step-number">4</div>
+                <h3>Get Treated</h3>
+                <p>Consult and receive care online</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Why Choose Us Section -->
+    <section class="why-choose-us">
+        <h2>Why Choose MediConnect?</h2>
+        <div class="benefits-grid">
+            <div class="benefit-card">
+                <div class="icon">⏰</div>
+                <h3>24/7 Availability</h3>
+                <p>Access healthcare whenever you need it, day or night</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon">🔒</div>
+                <h3>Secure & Private</h3>
+                <p>Your medical data is encrypted and protected</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon">💰</div>
+                <h3>Affordable Care</h3>
+                <p>Quality healthcare at reasonable prices</p>
+            </div>
+            <div class="benefit-card">
+                <div class="icon">⭐</div>
+                <h3>Expert Doctors</h3>
+                <p>Certified professionals with years of experience</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>MediConnect</h3>
+                <p>Your trusted online healthcare partner</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="/Home/Index">Home</a></li>
+                    <li><a href="/Home/Services">Services</a></li>
+                    <li><a href="/Home/Doctors">Doctors</a></li>
+                    <li><a href="/Home/About">About</a></li>
+                    <li><a href="/Home/Contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contact Info</h4>
+                <p>Email: info@mediconnect.com</p>
+                <p>Phone: +20 123 456 7890</p>
+            </div>
+        </div>
+        <div class="footer-bottom"><p>&copy; 2025 MediConnect. All rights reserved.</p></div>
+    </footer>
+
+    <!-- Absolute path to JS so the browser requests /js/... -->
+    <script src="/js/consultation-script.js" defer></script>
+</body>
+</html>

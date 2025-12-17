@@ -51,17 +51,26 @@
                         </a>
                     </li>
 
-                    @* Doctors link: hidden for Doctor role *@
-                    @if (!isDoctor)
-                    {
-                        <li class="nav-item">
+                    @* Doctors link:
+                       - If the current user is a Patient, we add a route param (mode=view) so the doctors page can render in read-only view.
+                       - Other users (Admin) will get the standard link (full access handled server-side by role checks).
+                    *@
+                    <li class="nav-item">
+                        @if (isPatient)
+                        {
+                            <a class="nav-link" asp-controller="Doctors" asp-action="Index" asp-route-mode="view">
+                                Doctors
+                            </a>
+                        }
+                        else if (!isDoctor)
+                        {
                             <a class="nav-link" asp-controller="Doctors" asp-action="Index">
                                 Doctors
                             </a>
-                        </li>
-                    }
+                        }
+                    </li>
 
-                    @* Patients link: hidden for Patient role *@
+                    @* Patients link: hidden for Patient role (patients don't manage other patients) *@
                     @if (!isPatient)
                     {
                         <li class="nav-item">

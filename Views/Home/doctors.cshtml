@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Our Doctors - MediConnect</title>
+
+	<!-- Absolute path so static CSS is served from wwwroot -->
+	<link rel="stylesheet" href="/css/consultation-style.css" />
+</head>
+<body>
+	<!-- Scroll to Top Button -->
+	<button id="scrollTopBtn" class="scroll-top-btn" title="Go to top">↑</button>
+
+	<!-- Login Modal (hidden; Login link redirects to /Login/Index) -->
+	<div id="loginModal" class="modal" style="display:none;">
+		<div class="modal-content">
+			<span class="close-modal">&times;</span>
+			<h2>Login to MediConnect</h2>
+			<form id="loginForm" class="modal-form">
+				<input type="email" id="loginEmail" placeholder="Email Address" autocomplete="username" required />
+				<input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password" required />
+				<button type="submit" class="btn-primary">Login</button>
+				<p class="form-note">Don't have an account? <a href="/Home/Contact" id="showSignup">Sign up</a></p>
+			</form>
+		</div>
+	</div>
+
+	<!-- Booking Modal (hidden by default) -->
+	<div id="bookingModal" class="modal" style="display:none;">
+		<div class="modal-content">
+			<span class="close-modal">&times;</span>
+			<h2>Book Your Consultation</h2>
+			<form id="bookingForm" class="modal-form">
+				<input type="text" id="patientName" placeholder="Your Name" required />
+				<input type="email" id="patientEmail" placeholder="Email Address" required />
+				<input type="tel" id="patientPhone" placeholder="Phone Number" required />
+				<select id="doctorSelect" required>
+					<option value="">Select a Doctor</option>
+					<option value="Dr. Ahmed Hassan">Dr. Ahmed Hassan - General Physician</option>
+					<option value="Dr. Sarah Ali">Dr. Sarah Ali - Pediatrician</option>
+					<option value="Dr. Mohammed Khalil">Dr. Mohammed Khalil - Cardiologist</option>
+				</select>
+				<input type="date" id="appointmentDate" required />
+				<select id="appointmentTime" required>
+					<option value="">Select Time</option>
+					<option value="09:00 AM">09:00 AM</option>
+					<option value="10:00 AM">10:00 AM</option>
+					<option value="11:00 AM">11:00 AM</option>
+					<option value="02:00 PM">02:00 PM</option>
+					<option value="03:00 PM">03:00 PM</option>
+					<option value="04:00 PM">04:00 PM</option>
+				</select>
+				<textarea id="appointmentReason" placeholder="Reason for consultation" rows="3" required></textarea>
+				<button type="submit" class="btn-primary">Confirm Booking</button>
+			</form>
+		</div>
+	</div>
+
+	<!-- Success Message -->
+	<div id="successMessage" class="success-message" style="display:none;"><span id="successText">Success!</span></div>
+
+	<!-- Header/Navigation -->
+	<header>
+		<nav class="navbar">
+			<div class="logo"><h1>MediConnect</h1></div>
+			<ul class="nav-links">
+				<li><a href="/Home/Index">Home</a></li>
+				<li><a href="/Home/Services">Services</a></li>
+				<li><a href="/Home/Doctors" class="active">Doctors</a></li>
+				<li><a href="/Home/About">About</a></li>
+				<li><a href="/Home/Contact">Contact</a></li>
+			</ul>
+
+			<!-- Login redirects to /Login/Index -->
+			<a href="/Login/Index" class="login-btn">Login</a>
+		</nav>
+	</header>
+
+	<!-- Page Header -->
+	<section class="page-header">
+		<h1>Meet Our Doctors</h1>
+		<p>Experienced healthcare professionals ready to help you</p>
+	</section>
+
+	<!-- Doctors Section -->
+	<section id="doctors" class="doctors">
+		<div class="doctors-grid">
+			<div class="doctor-card">
+				<div class="doctor-image">👨‍⚕️</div>
+				<h3>Dr. Ahmed Hassan</h3>
+				<p class="specialty">General Physician</p>
+				<p class="experience">15 years experience</p>
+				<div class="doctor-details">
+					<p>🎓 MBBS, MD - General Medicine</p>
+					<p>🏥 Cairo Medical Center</p>
+					<p>⭐ 4.9/5 (250+ reviews)</p>
+					<p class="languages">Languages: Arabic, English</p>
+				</div>
+				<button class="btn-book">Book Now</button>
+			</div>
+
+			<div class="doctor-card">
+				<div class="doctor-image">👩‍⚕️</div>
+				<h3>Dr. Sarah Ali</h3>
+				<p class="specialty">Pediatrician</p>
+				<p class="experience">10 years experience</p>
+				<div class="doctor-details">
+					<p>🎓 MBBS, DCH - Pediatrics</p>
+					<p>🏥 Children's Healthcare Clinic</p>
+					<p>⭐ 5.0/5 (180+ reviews)</p>
+					<p class="languages">Languages: Arabic, English, French</p>
+				</div>
+				<button class="btn-book">Book Now</button>
+			</div>
+
+			<div class="doctor-card">
+				<div class="doctor-image">👨‍⚕️</div>
+				<h3>Dr. Mohammed Khalil</h3>
+				<p class="specialty">Cardiologist</p>
+				<p class="experience">20 years experience</p>
+				<div class="doctor-details">
+					<p>🎓 MBBS, DM - Cardiology</p>
+					<p>🏥 Heart Care Institute</p>
+					<p>⭐ 4.8/5 (320+ reviews)</p>
+					<p class="languages">Languages: Arabic, English</p>
+				</div>
+				<button class="btn-book">Book Now</button>
+			</div>
+
+			<div class="doctor-card">
+				<div class="doctor-image">👩‍⚕️</div>
+				<h3>Dr. Fatima Nour</h3>
+				<p class="specialty">Dermatologist</p>
+				<p class="experience">12 years experience</p>
+				<div class="doctor-details">
+					<p>🎓 MBBS, MD - Dermatology</p>
+					<p>🏥 Skin & Beauty Clinic</p>
+					<p>⭐ 4.9/5 (200+ reviews)</p>
+					<p class="languages">Languages: Arabic, English</p>
+				</div>
+				<button class="btn-book">Book Now</button>
+			</div>
+
+			<div class="doctor-card">
+				<div class="doctor-image">👨‍⚕️</div>
+				<h3>Dr. Omar Mansour</h3>
+				<p class="specialty">Orthopedic Surgeon</p>
+				<p class="experience">18 years experience</p>
+				<div class="doctor-details">
+					<p>🎓 MBBS, MS - Orthopedics</p>
+					<p>🏥 Bone & Joint Hospital</p>
+					<p>⭐ 4.7/5 (280+ reviews)</p>
+					<p class="languages">Languages: Arabic, English</p>
+				</div>
+				<button class="btn-book">Book Now</button>
+			</div>
+
+			<div class="doctor-card">
+				<div class="doctor-image">👩‍⚕️</div>
+				<h3>Dr. Layla Ibrahim</h3>
+				<p class="specialty">Gynecologist</p>
+				<p class="experience">14 years experience</p>
+				<div class="doctor-details">
+					<p>🎓 MBBS, MD - Obstetrics & Gynecology</p>
+					<p>🏥 Women's Health Center</p>
+					<p>⭐ 5.0/5 (220+ reviews)</p>
+					<p class="languages">Languages: Arabic, English</p>
+				</div>
+				<button class="btn-book">Book Now</button>
+			</div>
+		</div>
+	</section>
+
+	<!-- Specialties Section -->
+	<section class="specialties">
+		<h2>Medical Specialties We Cover</h2>
+		<div class="specialties-grid">
+			<div class="specialty-item"><span class="specialty-icon">🫀</span><h4>Cardiology</h4></div>
+			<div class="specialty-item"><span class="specialty-icon">👶</span><h4>Pediatrics</h4></div>
+			<div class="specialty-item"><span class="specialty-icon">🧠</span><h4>Neurology</h4></div>
+			<div class="specialty-item"><span class="specialty-icon">🦴</span><h4>Orthopedics</h4></div>
+			<div class="specialty-item"><span class="specialty-icon">👁️</span><h4>Ophthalmology</h4></div>
+			<div class="specialty-item"><span class="specialty-icon">🦷</span><h4>Dentistry</h4></div>
+			<div class="specialty-item"><span class="specialty-icon">💆</span><h4>Dermatology</h4></div>
+			<div class="specialty-item"><span class="specialty-icon">🩺</span><h4>General Medicine</h4></div>
+		</div>
+	</section>
+
+	<!-- Footer -->
+	<footer>
+		<div class="footer-content">
+			<div class="footer-section">
+				<h3>MediConnect</h3>
+				<p>Your trusted online healthcare partner</p>
+			</div>
+			<div class="footer-section">
+				<h4>Quick Links</h4>
+				<ul>
+					<li><a href="/Home/Index">Home</a></li>
+					<li><a href="/Home/Services">Services</a></li>
+					<li><a href="/Home/Doctors">Doctors</a></li>
+					<li><a href="/Home/About">About</a></li>
+					<li><a href="/Home/Contact">Contact</a></li>
+				</ul>
+			</div>
+			<div class="footer-section">
+				<h4>Contact Info</h4>
+				<p>Email: info@mediconnect.com</p>
+				<p>Phone: +20 123 456 7890</p>
+			</div>
+		</div>
+		<div class="footer-bottom"><p>&copy; 2025 MediConnect. All rights reserved.</p></div>
+	</footer>
+
+	<!-- Absolute path to JS so static file is requested from wwwroot -->
+	<script src="/js/consultation-script.js" defer></script>
+</body>
+</html>

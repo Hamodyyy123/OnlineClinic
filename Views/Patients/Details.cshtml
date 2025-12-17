@@ -4,31 +4,74 @@
     var canManage = ViewBag.CanManage ?? false;
 }
 
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Patients.css" asp-append-version="true" />
 
-<h2>Patient Details</h2>
-<div class="card mb-4">
-    <div class="card-body">
-        <h5>@Model.Name</h5>
-        <p><b>Admission Date:</b> @(Model.AdmissionDate?.ToString("yyyy-MM-dd") ?? "")</p>
-        <p><b>Contact:</b> @Model.ContactInfo</p>
-        <p><b>Age:</b> @Model.Age</p>
-        <p><b>Gender:</b> @Model.Gender</p>
-        <p><b>Room Number:</b> @Model.RoomNumber</p>
-        <p><b>Emergency Contact:</b> @Model.EmergencyContact</p>
-        <p><b>Assigned Doctor:</b> @ViewBag.AssignedDoctorName</p>
-        <button type="button" class="btn btn-info" onclick="showMedicalHistory(@Model.PatientId)">
-            View Medical History
-        </button>
-        <a class="btn btn-secondary ms-2" href="@Url.Action("Index", "Patients")">Back to List</a>
-    </div>
+<div class="patient-details-wrapper">
+    <section class="container py-4">
+        <div class="card patient-details-card mb-4">
+            <div class="card-body">
+                <div class="patient-details-header">
+                    <div class="patient-avatar">
+                        @(string.IsNullOrEmpty(Model.Name) ? "P" : Model.Name.Trim()[0].ToString().ToUpper())
+                    </div>
+                    <div>
+                        <h3 class="mb-1">@Model.Name</h3>
+                        <span class="text-secondary">Patient ID: @Model.PatientId</span>
+                    </div>
+                </div>
+
+                <div class="patient-detail-grid">
+                    <div class="patient-detail-item">
+                        <div class="patient-detail-label">Admission Date</div>
+                        <div class="patient-detail-value">
+                            @(
+                                Model.AdmissionDate?.ToString("yyyy-MM-dd") ?? "—"
+                                )
+                        </div>
+                    </div>
+                    <div class="patient-detail-item">
+                        <div class="patient-detail-label">Contact</div>
+                        <div class="patient-detail-value">@(!string.IsNullOrEmpty(Model.ContactInfo) ? Model.ContactInfo : "—")</div>
+                    </div>
+                    <div class="patient-detail-item">
+                        <div class="patient-detail-label">Age</div>
+                        <div class="patient-detail-value">@Model.Age</div>
+                    </div>
+                    <div class="patient-detail-item">
+                        <div class="patient-detail-label">Gender</div>
+                        <div class="patient-detail-value">@Model.Gender</div>
+                    </div>
+                    <div class="patient-detail-item">
+                        <div class="patient-detail-label">Room Number</div>
+                        <div class="patient-detail-value">@(!string.IsNullOrEmpty(Model.RoomNumber) ? Model.RoomNumber : "—")</div>
+                    </div>
+                    <div class="patient-detail-item">
+                        <div class="patient-detail-label">Emergency Contact</div>
+                        <div class="patient-detail-value">@(!string.IsNullOrEmpty(Model.EmergencyContact) ? Model.EmergencyContact : "—")</div>
+                    </div>
+                    <div class="patient-detail-item">
+                        <div class="patient-detail-label">Assigned Doctor</div>
+                        <div class="patient-detail-value">@ViewBag.AssignedDoctorName</div>
+                    </div>
+                </div>
+
+                <div class="mt-4 d-flex gap-2">
+                    <button type="button" class="btn btn-primary" onclick="showMedicalHistory(@Model.PatientId)">
+                        View Medical History
+                    </button>
+                    <a class="btn btn-secondary" href="@Url.Action("Index", "Patients")">Back to List</a>
+                </div>
+            </div>
+        </div>
+    </section>
 </div>
 
 <!-- Medical History Modal (View/Add/Edit) -->
 <div class="modal fade" id="medicalHistoryModal" tabindex="-1" aria-labelledby="medicalHistoryLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
+        <div class="modal-content medical-history-modal-content">
+            <div class="modal-header medical-history-modal-header">
                 <h5 class="modal-title" id="medicalHistoryLabel">Medical History</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
@@ -40,7 +83,7 @@
 <!-- Medical History Add/Edit Modal -->
 <div class="modal fade" id="medicalHistoryEditModal" tabindex="-1" aria-labelledby="medicalHistoryEditModalLabel" aria-hidden="true">
     <div class="modal-dialog">
-        <div class="modal-content">
+        <div class="modal-content medical-history-edit-content">
             <form id="mh-form">
                 <div class="modal-header">
                     <h5 class="modal-title" id="medicalHistoryEditModalLabel">Add/Edit Medical History</h5>
@@ -51,19 +94,19 @@
                     <input type="hidden" id="mh-id" name="medicalHistoryId" />
                     <input type="hidden" id="mh-patient-id" name="patientId" value="@Model.PatientId" />
                     <div class="mb-2">
-                        <label for="mh-date">Date</label>
+                        <label for="mh-date" class="form-label">Date</label>
                         <input type="date" id="mh-date" name="startDate" class="form-control" required />
                     </div>
                     <div class="mb-2">
-                        <label for="mh-diagnosis">Diagnosis</label>
+                        <label for="mh-diagnosis" class="form-label">Diagnosis</label>
                         <input id="mh-diagnosis" name="diagnosis" class="form-control" required />
                     </div>
                     <div class="mb-2">
-                        <label for="mh-description">Description</label>
+                        <label for="mh-description" class="form-label">Description</label>
                         <textarea id="mh-description" name="description" class="form-control" required></textarea>
                     </div>
                     <div class="mb-2">
-                        <label for="mh-notes">Notes</label>
+                        <label for="mh-notes" class="form-label">Notes</label>
                         <textarea id="mh-notes" name="notes" class="form-control"></textarea>
                     </div>
                 </div>
@@ -76,9 +119,9 @@
     </div>
 </div>
 
-<!-- Role-check for JS -->
 <script>
-    window.canManage = @(canManage ? "true" : "false");
+    window.canManage = @(canManage.ToString().ToLower());
 </script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="~/js/patient.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="~/js/patient.js" asp-append-version="true"></script>

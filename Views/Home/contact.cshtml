@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contact Us - MediConnect</title>
+
+    <!-- Absolute path so static CSS is served from wwwroot -->
+    <link rel="stylesheet" href="/css/consultation-style.css" />
+</head>
+<body>
+    <!-- Scroll to Top Button -->
+    <button id="scrollTopBtn" class="scroll-top-btn" title="Go to top">↑</button>
+
+    <!-- Login Modal (hidden; Login link redirects to /Login/Index) -->
+    <div id="loginModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Login to MediConnect</h2>
+            <form id="loginForm" class="modal-form">
+                <input type="email" id="loginEmail" placeholder="Email Address" autocomplete="username" required />
+                <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password" required />
+                <button type="submit" class="btn-primary">Login</button>
+                <p class="form-note">Don't have an account? <a href="/Home/Contact" id="showSignup">Sign up</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success Message -->
+    <div id="successMessage" class="success-message" style="display:none;"><span id="successText">Success!</span></div>
+
+    <!-- Header/Navigation -->
+    <header>
+        <nav class="navbar">
+            <div class="logo"><h1>MediConnect</h1></div>
+            <ul class="nav-links">
+                <li><a href="/Home/Index">Home</a></li>
+                <li><a href="/Home/Services">Services</a></li>
+                <li><a href="/Home/Doctors">Doctors</a></li>
+                <li><a href="/Home/About">About</a></li>
+                <li><a href="/Home/Contact" class="active">Contact</a></li>
+            </ul>
+
+            <!-- Login redirects to /Login/Index -->
+            <a href="/Login/Index" class="login-btn">Login</a>
+        </nav>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <h1>Get In Touch</h1>
+        <p>We're here to help and answer any questions you might have</p>
+    </section>
+
+    <!-- Contact Info Section -->
+    <section class="contact-info-section">
+        <div class="contact-info-grid">
+            <div class="contact-info-card">
+                <div class="contact-icon">📧</div>
+                <h3>Email Us</h3>
+                <p>info@mediconnect.com</p>
+                <p>support@mediconnect.com</p>
+            </div>
+            <div class="contact-info-card">
+                <div class="contact-icon">📞</div>
+                <h3>Call Us</h3>
+                <p>+20 123 456 7890</p>
+                <p>+20 123 456 7891</p>
+            </div>
+            <div class="contact-info-card">
+                <div class="contact-icon">📍</div>
+                <h3>Visit Us</h3>
+                <p>123 Medical Street</p>
+                <p>Cairo, Egypt 11511</p>
+            </div>
+            <div class="contact-info-card">
+                <div class="contact-icon">⏰</div>
+                <h3>Working Hours</h3>
+                <p>Mon-Fri: 8:00 AM - 10:00 PM</p>
+                <p>Sat-Sun: 9:00 AM - 8:00 PM</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Form Section -->
+    <section id="contact" class="contact">
+        <h2>Send Us a Message</h2>
+        <p class="contact-description">
+            Have a question or need assistance? Fill out the form below and we'll
+            get back to you as soon as possible.
+        </p>
+
+        <!-- form handled client-side (demo) - change action/method if posting to server -->
+        <form id="contactForm" class="contact-form">
+            <div class="form-row">
+                <input type="text" id="contactName" placeholder="Your Name" required />
+                <input type="email" id="contactEmail" placeholder="Your Email" required />
+            </div>
+            <div class="form-row">
+                <input type="tel" id="contactPhone" placeholder="Phone Number" required />
+                <select id="contactSubject" required>
+                    <option value="">Select Subject</option>
+                    <option value="General Inquiry">General Inquiry</option>
+                    <option value="Technical Support">Technical Support</option>
+                    <option value="Billing Question">Billing Question</option>
+                    <option value="Feedback">Feedback</option>
+                    <option value="Other">Other</option>
+                </select>
+            </div>
+            <textarea id="contactMessage" placeholder="Your Message" rows="6" required></textarea>
+            <button type="submit" class="btn-primary">Send Message</button>
+        </form>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-container">
+            <div class="faq-item">
+                <h3>How do I book an appointment?</h3>
+                <p>Visit our Doctors page, select a doctor, and click "Book Now".</p>
+            </div>
+            <div class="faq-item">
+                <h3>What are the consultation fees?</h3>
+                <p>Fees vary by specialty and doctor; you'll see them before confirming.</p>
+            </div>
+            <div class="faq-item">
+                <h3>Can I get a refund if I cancel?</h3>
+                <p>Cancellations 24+ hours before appointment are eligible for a full refund.</p>
+            </div>
+            <div class="faq-item">
+                <h3>How secure is my medical information?</h3>
+                <p>We use strong encryption and follow data protection best practices.</p>
+            </div>
+            <div class="faq-item">
+                <h3>Do you accept insurance?</h3>
+                <p>We are partnering with insurers; contact support for current coverage info.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Map Section (Placeholder) -->
+    <section class="map-section">
+        <h2>Find Us</h2>
+        <div class="map-placeholder">
+            <p>🗺️ Map Location</p>
+            <p>123 Medical Street, Cairo, Egypt 11511</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>MediConnect</h3>
+                <p>Your trusted online healthcare partner</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="/Home/Index">Home</a></li>
+                    <li><a href="/Home/Services">Services</a></li>
+                    <li><a href="/Home/Doctors">Doctors</a></li>
+                    <li><a href="/Home/About">About</a></li>
+                    <li><a href="/Home/Contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contact Info</h4>
+                <p>Email: info@mediconnect.com</p>
+                <p>Phone: +20 123 456 7890</p>
+            </div>
+        </div>
+        <div class="footer-bottom"><p>&copy; 2025 MediConnect. All rights reserved.</p></div>
+    </footer>
+
+    <!-- Absolute path to JS so static file is requested from wwwroot -->
+    <script src="/js/consultation-script.js" defer></script>
+</body>
+</html>

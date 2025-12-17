@@ -3,94 +3,162 @@
 @{
     ViewData["Title"] = "Appointments";
 }
-<h2>Appointments</h2>
 
-<form id="apptsFilterForm" class="row g-2 mb-3">
-    <div class="col-md-2">
-        <input type="date" id="filterDate" class="form-control" />
-    </div>
-    <div class="col-md-3">
-        <select id="filterDoctor" class="form-control"></select>
-    </div>
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Appointment.css" asp-append-version="true" />
 
-    <!-- Wrap patient filter so JS can hide the whole block for patient role -->
-    <div class="col-md-3 filter-patient-wrapper">
-        <select id="filterPatient" class="form-control"></select>
-    </div>
+<div class="appts-page-wrapper">
+    <!-- Page Header / Hero -->
+    <section class="appts-hero">
+        <div class="appts-hero-bg"></div>
+        <div class="container appts-hero-content">
+            <div class="appts-hero-text">
+                <h1>Appointments</h1>
+                <p>View, filter, and manage your clinic appointments in a clean and intuitive interface.</p>
+            </div>
+            <div class="appts-hero-meta">
+                <div class="appts-stat-card">
+                    <span class="appts-stat-label">Today</span>
+                    <span class="appts-stat-value" id="apptsTodayCount">–</span>
+                </div>
+                <div class="appts-stat-card">
+                    <span class="appts-stat-label">Upcoming</span>
+                    <span class="appts-stat-value" id="apptsUpcomingCount">–</span>
+                </div>
+            </div>
+        </div>
+    </section>
 
-    <div class="col-md-2">
-        <button class="btn btn-secondary" type="submit">Filter</button>
-        <button class="btn btn-outline-primary" type="button" id="apptsRefreshBtn">Refresh</button>
-    </div>
-    <div class="col-md-2 text-end">
-        <button class="btn btn-success" type="button" id="apptAddBtn">Add Appointment</button>
-    </div>
-</form>
+    <!-- Main Content -->
+    <section class="container appts-main">
+        <!-- Filter Bar -->
+        <div class="card appts-filter-card">
+            <div class="card-header appts-filter-header">
+                <div>
+                    <h3>Filter Appointments</h3>
+                    <p class="appts-filter-subtitle">Narrow down appointments by date, doctor, and patient.</p>
+                </div>
+                <div class="appts-header-actions">
+                    <button class="btn btn-outline btn-sm" type="button" id="apptsRefreshBtn">
+                        Refresh
+                    </button>
+                    <button class="btn btn-success btn-sm" type="button" id="apptAddBtn">
+                        + Add Appointment
+                    </button>
+                </div>
+            </div>
+            <div class="card-body">
+                <form id="apptsFilterForm" class="row g-3 appts-filter-form">
+                    <div class="col-md-3">
+                        <label for="filterDate" class="form-label appts-label">Date</label>
+                        <input type="date" id="filterDate" class="form-control" />
+                    </div>
+                    <div class="col-md-3">
+                        <label for="filterDoctor" class="form-label appts-label">Doctor</label>
+                        <select id="filterDoctor" class="form-control"></select>
+                    </div>
 
-<table class="table table-bordered" id="apptsMainTable">
-    <thead>
-        <tr>
-            <th>Doctor</th>
-            <!-- Give patient header an id so JS can hide it for patient role -->
-            <th id="thPatient">Patient</th>
-            <th>Start</th>
-            <th>End</th>
-            <th>Status</th>
-            <th>Notes</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody id="apptsTableBody"></tbody>
-</table>
+                    <!-- Wrap patient filter so JS can hide the whole block for patient role -->
+                    <div class="col-md-3 filter-patient-wrapper">
+                        <label for="filterPatient" class="form-label appts-label">Patient</label>
+                        <select id="filterPatient" class="form-control"></select>
+                    </div>
+
+                    <div class="col-md-3 appts-filter-buttons">
+                        <button class="btn btn-primary w-100" type="submit">Apply Filters</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Table Card -->
+        <div class="card appts-table-card">
+            <div class="card-header appts-table-header">
+                <h3>Scheduled Appointments</h3>
+                <span class="appts-table-meta" id="apptsCountSummary">Loading…</span>
+            </div>
+            <div class="card-body appts-table-wrapper">
+                <div id="appts-error" class="alert alert-danger d-none mb-3"></div>
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle appts-table" id="apptsMainTable">
+                        <thead>
+                            <tr>
+                                <th>Doctor</th>
+                                <!-- Give patient header an id so JS can hide it for patient role -->
+                                <th id="thPatient">Patient</th>
+                                <th>Start</th>
+                                <th>End</th>
+                                <th>Status</th>
+                                <th>Notes</th>
+                                <th class="appts-actions-col"></th>
+                            </tr>
+                        </thead>
+                        <tbody id="apptsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
 
 <!-- Appointment Modal -->
 <div class="modal fade" id="apptModal" tabindex="-1" aria-labelledby="apptModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
+    <div class="modal-dialog modal-dialog-centered modal-lg appts-modal-dialog">
+        <div class="modal-content appts-modal-content">
             <form id="apptForm">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="apptModalLabel">Book/Add Appointment</h5>
+                <div class="modal-header appts-modal-header">
+                    <div>
+                        <h5 class="modal-title" id="apptModalLabel">Book/Add Appointment</h5>
+                        <p class="appts-modal-subtitle">Choose doctor, time and other details for the appointment.</p>
+                    </div>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <div id="appt-error" class="alert alert-danger d-none"></div>
+                    <div id="appt-error" class="alert alert-danger d-none mb-3"></div>
                     <input type="hidden" id="apptId" />
 
-                    <div class="mb-2">
-                        <label for="apptDoctor">Doctor</label>
-                        <select id="apptDoctor" class="form-control"></select>
-                    </div>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label for="apptDoctor" class="form-label">Doctor</label>
+                            <select id="apptDoctor" class="form-control"></select>
+                        </div>
 
-                    <!-- This row will be hidden in JS for patient role -->
-                    <div class="mb-2 appt-patient-row">
-                        <label for="apptPatient">Patient</label>
-                        <select id="apptPatient" class="form-control"></select>
-                    </div>
+                        <!-- This row will be hidden in JS for patient role -->
+                        <div class="col-md-6 appt-patient-row">
+                            <label for="apptPatient" class="form-label">Patient</label>
+                            <select id="apptPatient" class="form-control"></select>
+                        </div>
 
-                    <div class="mb-2">
-                        <label for="apptStart">Start Time</label>
-                        <input type="datetime-local" id="apptStart" class="form-control" required />
+                        <div class="col-md-6">
+                            <label for="apptStart" class="form-label">Start Time</label>
+                            <input type="datetime-local" id="apptStart" class="form-control" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label for="apptEnd" class="form-label">End Time</label>
+                            <input type="datetime-local" id="apptEnd" class="form-control" required />
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="apptStatus" class="form-label">Status</label>
+                            <select id="apptStatus" class="form-control">
+                                <option value="Booked">Booked</option>
+                                <option value="Completed">Completed</option>
+                                <option value="Cancelled">Cancelled</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label for="apptNotes" class="form-label">Notes</label>
+                            <textarea id="apptNotes" class="form-control" rows="2" placeholder="Optional notes about this appointment"></textarea>
+                        </div>
+
+                        <div class="col-12">
+                            <div id="doctorSlots" class="appts-slots-box"></div>
+                        </div>
                     </div>
-                    <div class="mb-2">
-                        <label for="apptEnd">End Time</label>
-                        <input type="datetime-local" id="apptEnd" class="form-control" required />
-                    </div>
-                    <div class="mb-2">
-                        <label for="apptStatus">Status</label>
-                        <select id="apptStatus" class="form-control">
-                            <option value="Booked">Booked</option>
-                            <option value="Completed">Completed</option>
-                            <option value="Cancelled">Cancelled</option>
-                        </select>
-                    </div>
-                    <div class="mb-2">
-                        <label for="apptNotes">Notes</label>
-                        <textarea id="apptNotes" class="form-control"></textarea>
-                    </div>
-                    <div class="mb-2" id="doctorSlots"></div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" id="apptSaveBtn" class="btn btn-success">Save</button>
+                <div class="modal-footer appts-modal-footer">
+                    <button type="button" id="apptSaveBtn" class="btn btn-success">Save Appointment</button>
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                 </div>
             </form>
@@ -105,4 +173,4 @@
 </script>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script src="~/js/Appointment.js"></script>
+<script src="~/js/Appointment.js" asp-append-version="true"></script>

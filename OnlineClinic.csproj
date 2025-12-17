@@ -13,7 +13,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Content Remove="Views\Home\about.cshtml" />
+    <Content Remove="Views\Home\contact.cshtml" />
+    <Content Remove="Views\Home\doctors.cshtml" />
+    <Content Remove="Views\Home\index.cshtml" />
+    <Content Remove="Views\Home\services.cshtml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ContainerPort Include="8081" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="Views\Home\about.cshtml" />
+    <None Include="Views\Home\contact.cshtml" />
+    <None Include="Views\Home\doctors.cshtml" />
+    <None Include="Views\Home\Index.cshtml" />
+    <None Include="Views\Home\services.cshtml" />
   </ItemGroup>
 
   <ItemGroup>

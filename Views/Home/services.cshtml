@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Our Services - MediConnect</title>
+
+	<!-- Absolute path so static CSS is served from wwwroot -->
+	<link rel="stylesheet" href="/css/consultation-style.css" />
+</head>
+<body>
+	<!-- Scroll to Top Button -->
+	<button id="scrollTopBtn" class="scroll-top-btn" title="Go to top">↑</button>
+
+	<!-- Login Modal (hidden; Login link redirects to /Login/Index) -->
+	<div id="loginModal" class="modal" style="display:none;">
+		<div class="modal-content">
+			<span class="close-modal">&times;</span>
+			<h2>Login to MediConnect</h2>
+			<form id="loginForm" class="modal-form">
+				<input type="email" id="loginEmail" placeholder="Email Address" autocomplete="username" required />
+				<input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password" required />
+				<button type="submit" class="btn-primary">Login</button>
+				<p class="form-note">Don't have an account? <a href="/Home/Contact" id="showSignup">Sign up</a></p>
+			</form>
+		</div>
+	</div>
+
+	<!-- Booking Modal -->
+	<div id="bookingModal" class="modal" style="display:none;">
+		<div class="modal-content">
+			<span class="close-modal">&times;</span>
+			<h2>Book Your Consultation</h2>
+			<form id="bookingForm" class="modal-form">
+				<input type="text" id="patientName" placeholder="Your Name" required />
+				<input type="email" id="patientEmail" placeholder="Email Address" required />
+				<input type="tel" id="patientPhone" placeholder="Phone Number" required />
+				<select id="doctorSelect" required>
+					<option value="">Select a Doctor</option>
+					<option value="Dr. Ahmed Hassan">Dr. Ahmed Hassan - General Physician</option>
+					<option value="Dr. Sarah Ali">Dr. Sarah Ali - Pediatrician</option>
+					<option value="Dr. Mohammed Khalil">Dr. Mohammed Khalil - Cardiologist</option>
+				</select>
+				<input type="date" id="appointmentDate" required />
+				<select id="appointmentTime" required>
+					<option value="">Select Time</option>
+					<option value="09:00 AM">09:00 AM</option>
+					<option value="10:00 AM">10:00 AM</option>
+					<option value="11:00 AM">11:00 AM</option>
+					<option value="02:00 PM">02:00 PM</option>
+					<option value="03:00 PM">03:00 PM</option>
+					<option value="04:00 PM">04:00 PM</option>
+				</select>
+				<textarea id="appointmentReason" placeholder="Reason for consultation" rows="3" required></textarea>
+				<button type="submit" class="btn-primary">Confirm Booking</button>
+			</form>
+		</div>
+	</div>
+
+	<!-- Success Message -->
+	<div id="successMessage" class="success-message" style="display:none;">
+		<span id="successText">Success!</span>
+	</div>
+
+	<!-- Header/Navigation -->
+	<header>
+		<nav class="navbar">
+			<div class="logo"><h1>MediConnect</h1></div>
+			<ul class="nav-links">
+				<li><a href="/Home/Index">Home</a></li>
+				<li><a href="/Home/Services" class="active">Services</a></li>
+				<li><a href="/Home/Doctors">Doctors</a></li>
+				<li><a href="/Home/About">About</a></li>
+				<li><a href="/Home/Contact">Contact</a></li>
+			</ul>
+
+			<!-- Login redirects to /Login/Index -->
+			<a href="/Login/Index" class="login-btn">Login</a>
+		</nav>
+	</header>
+
+	<!-- Page Header -->
+	<section class="page-header">
+		<h1>Our Services</h1>
+		<p>Comprehensive healthcare solutions at your fingertips</p>
+	</section>
+
+	<!-- Services Section -->
+	<section id="services" class="services">
+		<div class="services-grid">
+			<div class="service-card">
+				<div class="icon">💬</div>
+				<h3>Online Consultation</h3>
+				<p>Chat with experienced doctors anytime, anywhere</p>
+				<ul class="service-features">
+					<li>Instant messaging with doctors</li>
+					<li>Get answers to your health questions</li>
+					<li>Follow-up consultations included</li>
+					<li>Available 24/7</li>
+				</ul>
+				<button class="btn-primary book-service-btn">Book Now</button>
+			</div>
+
+			<div class="service-card">
+				<div class="icon">🧾</div>
+				<h3>E-Prescription</h3>
+				<p>Get digital prescriptions sent directly to you</p>
+				<ul class="service-features">
+					<li>Digital prescription delivery</li>
+					<li>Direct pharmacy integration</li>
+					<li>Medication reminders</li>
+					<li>Refill requests</li>
+				</ul>
+				<button class="btn-primary book-service-btn">Book Now</button>
+			</div>
+
+			<div class="service-card">
+				<div class="icon">📋</div>
+				<h3>Health Records</h3>
+				<p>Access your medical history securely online</p>
+				<ul class="service-features">
+					<li>Secure cloud storage</li>
+					<li>Easy access anytime</li>
+					<li>Share with doctors easily</li>
+					<li>Track your health journey</li>
+				</ul>
+				<button class="btn-primary book-service-btn">Book Now</button>
+			</div>
+
+			<div class="service-card">
+				<div class="icon">🏥</div>
+				<h3>Lab Test Booking</h3>
+				<p>Schedule lab tests from the comfort of your home</p>
+				<ul class="service-features">
+					<li>Home sample collection</li>
+					<li>Wide range of tests</li>
+					<li>Quick results delivery</li>
+					<li>Doctor consultation included</li>
+				</ul>
+				<button class="btn-primary book-service-btn">Book Now</button>
+			</div>
+
+			<div class="service-card">
+				<div class="icon">🩺</div>
+				<h3>Health Monitoring</h3>
+				<p>Track your vitals and get personalized insights</p>
+				<ul class="service-features">
+					<li>Track blood pressure, sugar, etc.</li>
+					<li>AI-powered health insights</li>
+					<li>Regular health reports</li>
+					<li>Alert notifications</li>
+				</ul>
+				<button class="btn-primary book-service-btn">Book Now</button>
+			</div>
+		</div>
+	</section>
+
+	<!-- Service Benefits -->
+	<section class="service-benefits">
+		<h2>Why Choose Our Services?</h2>
+		<div class="benefits-list">
+			<div class="benefit-item">
+				<span class="check-icon">✓</span>
+				<div>
+					<h4>Certified Healthcare Professionals</h4>
+					<p>All our doctors are licensed and verified medical experts</p>
+				</div>
+			</div>
+			<div class="benefit-item">
+				<span class="check-icon">✓</span>
+				<div>
+					<h4>Affordable Pricing</h4>
+					<p>Quality healthcare services at competitive rates</p>
+				</div>
+			</div>
+			<div class="benefit-item">
+				<span class="check-icon">✓</span>
+				<div>
+					<h4>Fast Response Time</h4>
+					<p>Connect with doctors within minutes of booking</p>
+				</div>
+			</div>
+			<div class="benefit-item">
+				<span class="check-icon">✓</span>
+				<div>
+					<h4>Complete Privacy</h4>
+					<p>Your health data is encrypted and secure</p>
+				</div>
+			</div>
+		</div>
+	</section>
+
+	<!-- Footer -->
+	<footer>
+		<div class="footer-content">
+			<div class="footer-section">
+				<h3>MediConnect</h3>
+				<p>Your trusted online healthcare partner</p>
+			</div>
+
+			<div class="footer-section">
+				<h4>Quick Links</h4>
+				<ul>
+					<li><a href="/Home/Index">Home</a></li>
+					<li><a href="/Home/Services">Services</a></li>
+					<li><a href="/Home/Doctors">Doctors</a></li>
+					<li><a href="/Home/About">About</a></li>
+					<li><a href="/Home/Contact">Contact</a></li>
+				</ul>
+			</div>
+
+			<div class="footer-section">
+				<h4>Contact Info</h4>
+				<p>Email: info@mediconnect.com</p>
+				<p>Phone: +20 123 456 7890</p>
+			</div>
+		</div>
+		<div class="footer-bottom"><p>&copy; 2025 MediConnect. All rights reserved.</p></div>
+	</footer>
+
+	<!-- Absolute path to JS so static file is requested from wwwroot -->
+	<script src="/js/consultation-script.js" defer></script>
+</body>
+</html>

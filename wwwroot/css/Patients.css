@@ -1,0 +1,600 @@
+﻿/* wwwroot/css/patient.css
+   Full CSS for Patient List, Details and Medical History
+   Extended styling with enhanced Details view
+*/
+
+/* ===== Design tokens fallback (in case site.css missing) ===== */
+:root {
+    --primary-500: #6366f1;
+    --primary-600: #4f46e5;
+    --secondary-500: #06b6d4;
+    --accent-500: #a855f7;
+    --success: #10b981;
+    --warning: #f59e0b;
+    --error: #ef4444;
+    --bg-primary: #ffffff;
+    --bg-secondary: #f7fafc;
+    --bg-tertiary: #f3f4f6;
+    --text-primary: #0f172a;
+    --text-secondary: #4b5563;
+    --text-tertiary: #94a3b8;
+    --radius-sm: 0.25rem;
+    --radius-lg: 0.75rem;
+    --radius-2xl: 1.25rem;
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --shadow-sm: 0 4px 10px rgba(15,23,42,0.06);
+    --shadow-md: 0 12px 30px rgba(15,23,42,0.08);
+    --shadow-lg: 0 25px 60px rgba(15,23,42,0.12);
+    --transition-fast: 150ms ease;
+    --transition-base: 220ms ease;
+}
+
+/* ===== Page layout ===== */
+.patient-page-wrapper {
+    min-height: 100vh;
+    background: var(--bg-secondary);
+    padding: 2.5rem 0 4rem;
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* ===== Hero / Header ===== */
+.patient-hero {
+    position: relative;
+    overflow: hidden;
+    padding: 1.5rem 0 1rem;
+    margin-bottom: 1.5rem;
+    border-radius: 0.5rem;
+}
+
+.patient-hero-bg {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, var(--secondary-500), var(--accent-500));
+    opacity: 0.96;
+    border-radius: 0.5rem;
+}
+
+.patient-hero-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    margin: 0 1rem;
+}
+
+.patient-hero-text h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    margin: 0 0 0.25rem 0;
+    color: #fff;
+}
+
+.patient-hero-text p {
+    margin: 0;
+    color: rgba(255,255,255,0.9);
+    max-width: 540px;
+}
+
+/* statistic card on hero */
+.patient-stat-card {
+    min-width: 120px;
+    padding: 0.6rem 1rem;
+    border-radius: 0.6rem;
+    background: rgba(255,255,255,0.12);
+    box-shadow: var(--shadow-sm);
+    border: 1px solid rgba(255,255,255,0.08);
+    text-align: center;
+    color: #fff;
+}
+
+.patient-stat-label {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    opacity: 0.9;
+}
+
+.patient-stat-value {
+    font-weight: 700;
+    font-size: 1.05rem;
+}
+
+/* ===== Main card ===== */
+.patient-list-card {
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-md);
+    background: var(--bg-primary);
+    padding: 1.25rem;
+    margin: 0 1rem;
+    overflow: hidden;
+}
+
+/* header row */
+.patient-list-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1rem;
+}
+
+    .patient-list-header h2 {
+        margin: 0;
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: var(--text-primary);
+    }
+
+    /* Add patient button (pill) */
+    .patient-list-header .btn-success {
+        padding: 0.45rem 0.9rem;
+        border-radius: 999px;
+        font-weight: 600;
+        box-shadow: var(--shadow-sm);
+        transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+        .patient-list-header .btn-success:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+/* ===== Table (directory) ===== */
+.patient-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.95rem;
+    border-radius: 0.8rem;
+    overflow: hidden;
+}
+
+    /* header */
+    .patient-table thead {
+        background: linear-gradient(180deg, rgba(15,23,42,0.03), rgba(15,23,42,0.02));
+    }
+
+    .patient-table th {
+        padding: 0.72rem 0.9rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        font-size: 0.72rem;
+        color: var(--text-secondary);
+        border-bottom: 1px solid rgba(15,23,42,0.06);
+        text-align: left;
+    }
+
+    /* cells */
+    .patient-table td {
+        padding: 0.68rem 0.9rem;
+        border-bottom: 1px solid rgba(15,23,42,0.03);
+        color: var(--text-primary);
+        vertical-align: middle;
+    }
+
+    /* zebra & hover */
+    .patient-table tbody tr:nth-child(odd) {
+        background: rgba(15,23,42,0.01);
+    }
+
+    .patient-table tbody tr:hover {
+        background: rgba(99,102,241,0.04);
+        transform: translateY(-1px);
+        box-shadow: 0 6px 18px rgba(15,23,42,0.04);
+    }
+
+    /* empty state row */
+    .patient-table .empty-state {
+        text-align: center;
+        color: var(--text-tertiary);
+        padding: 1.25rem;
+    }
+
+/* pill styles */
+.patient-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.22rem 0.6rem;
+    border-radius: 999px;
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    font-weight: 600;
+    font-size: 0.78rem;
+}
+
+/* details/edit buttons: pill shapes with gradients */
+.btn-detail {
+    background: linear-gradient(135deg, #06b6d4, #14b8a6);
+    color: #fff;
+    border: none;
+    padding: 0.36rem 0.8rem;
+    border-radius: 999px;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), opacity var(--transition-fast);
+}
+
+    .btn-detail:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+        opacity: 0.98;
+    }
+
+.btn-edit {
+    background: linear-gradient(135deg, #facc15, #fb923c);
+    color: #1f2937;
+    border: none;
+    padding: 0.36rem 0.78rem;
+    border-radius: 999px;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+    .btn-edit:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+    }
+
+/* small responsive spacing */
+.patient-table .actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+/* ===== Search / toolbar (optional) ===== */
+.patient-toolbar {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+    margin-bottom: 0.75rem;
+}
+
+.patient-search {
+    flex: 1;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+    .patient-search input[type="search"] {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        border-radius: 999px;
+        border: 1px solid rgba(15,23,42,0.06);
+        background: var(--bg-primary);
+        transition: box-shadow var(--transition-fast), border-color var(--transition-fast);
+    }
+
+        .patient-search input[type="search"]:focus {
+            outline: none;
+            box-shadow: 0 8px 20px rgba(99,102,241,0.12);
+            border-color: var(--primary-600);
+        }
+
+/* ===== Modals: base ===== */
+.patient-modal-dialog {
+    max-width: 900px;
+}
+
+.patient-modal-content, .medical-history-modal-content, .medical-history-edit-content {
+    border-radius: 12px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+}
+
+.patient-modal-header, .medical-history-modal-header {
+    background: linear-gradient(180deg, rgba(15,23,42,0.02), rgba(15,23,42,0.01));
+    border-bottom: 1px solid rgba(15,23,42,0.05);
+    padding: 0.8rem 1rem;
+}
+
+.patient-modal-body {
+    padding: 1rem 1.25rem;
+}
+
+.patient-modal-footer {
+    padding: 0.75rem 1rem;
+    border-top: 1px solid rgba(15,23,42,0.04);
+}
+
+/* form input styles inside modal */
+.patient-modal-body .form-control {
+    border-radius: 0.6rem;
+    border: 1px solid rgba(15,23,42,0.06);
+    padding: 0.45rem 0.6rem;
+}
+
+    .patient-modal-body .form-control:focus {
+        box-shadow: 0 8px 20px rgba(99,102,241,0.08);
+        border-color: var(--primary-600);
+    }
+
+/* ===== Medical history modal specific styles ===== */
+.medical-history-modal-content {
+    border-radius: 12px;
+    box-shadow: 0 30px 80px rgba(15,23,42,0.18);
+    margin-top=2rem;
+}
+
+.medical-history-modal-header {
+    background: linear-gradient(90deg, rgba(99,102,241,0.06), rgba(168,85,247,0.04));
+    border-bottom: 1px solid rgba(15,23,42,0.06);
+}
+
+.medical-history-modal-content .modal-body {
+    padding: 1rem 1.25rem;
+    max-height: 60vh;
+    overflow: auto;
+}
+
+.medical-history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.6rem;
+}
+
+    .medical-history-header .total {
+        color: var(--text-tertiary);
+        font-size: 0.85rem;
+    }
+
+/* Add / edit buttons inside MH modal */
+.btn-add-mh {
+    background: linear-gradient(135deg, var(--success), #059669);
+    color: #fff;
+    border-radius: 999px;
+    padding: 0.45rem 1rem;
+    font-weight: 600;
+    border: none;
+    box-shadow: var(--shadow-sm);
+}
+
+    .btn-add-mh:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-lg);
+    }
+
+/* Edit small button in MH rows */
+.btn-edit-mh {
+    background: linear-gradient(135deg, var(--warning), #f97316);
+    color: #fff;
+    border: none;
+    padding: 0.28rem 0.6rem;
+    border-radius: 6px;
+}
+
+/* Medical history table */
+.medical-history-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.95rem;
+}
+
+    .medical-history-table thead {
+        background: var(--bg-tertiary);
+    }
+
+    .medical-history-table th, .medical-history-table td {
+        padding: 0.55rem 0.75rem;
+        border-bottom: 1px solid rgba(15,23,42,0.04);
+        color: var(--text-secondary);
+    }
+
+    .medical-history-table tbody tr:nth-child(odd) {
+        background: rgba(15,23,42,0.02);
+    }
+
+/* ===== Patient Details view (ENHANCED) ===== */
+
+/* Outer wrapper */
+.patient-details-wrapper {
+    min-height: 100vh;
+    background: var(--bg-secondary);
+    padding: 2rem 0 4rem;
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Card */
+.patient-details-card {
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-lg);
+    background: var(--bg-primary);
+    padding: 1.5rem;
+    margin: 0 1rem;
+}
+
+/* Header area: avatar + name + meta */
+.patient-details-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.patient-avatar {
+    width: 72px;
+    height: 72px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--secondary-500), var(--accent-500));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: 700;
+    box-shadow: var(--shadow-sm);
+}
+
+/* Name block */
+.patient-details-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-primary);
+}
+
+.patient-details-meta {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+/* Detail grid: two-column layout with cards */
+.patient-detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 1rem;
+    align-items: start;
+}
+
+/* left column: main info */
+.patient-detail-main {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+/* right column: stats / quick actions box */
+.patient-detail-side {
+    background: var(--bg-tertiary);
+    padding: 1rem;
+    border-radius: 12px;
+    min-height: 120px;
+}
+
+/* small info items in grid */
+.patient-detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.8rem;
+    border-radius: var(--radius-lg);
+    background: linear-gradient(180deg, rgba(15,23,42,0.02), rgba(15,23,42,0.01));
+    border: 1px solid rgba(15,23,42,0.03);
+}
+
+.patient-detail-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-tertiary);
+}
+
+.patient-detail-value {
+    font-size: 0.98rem;
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+/* Action buttons under details */
+.patient-details-actions {
+    margin-top: 1rem;
+    display: flex;
+    gap: 0.75rem;
+}
+
+.btn-cta {
+    padding: 0.6rem 1rem;
+    border-radius: 999px;
+    font-weight: 700;
+    color: white;
+    border: none;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.btn-cta-primary {
+    background: linear-gradient(90deg, var(--primary-600), var(--accent-500));
+}
+
+.btn-cta-secondary {
+    background: linear-gradient(90deg, var(--secondary-500), #0ea5b5);
+}
+
+.btn-cta:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+}
+
+/* small meta badges inside right column */
+.side-stat {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem 0;
+    border-bottom: 1px dashed rgba(15,23,42,0.03);
+    font-weight: 600;
+}
+
+    .side-stat:last-child {
+        border-bottom: none;
+    }
+
+/* ===== Responsive adjustments ===== */
+@media (max-width: 1100px) {
+    .patient-detail-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .patient-avatar {
+        width: 64px;
+        height: 64px;
+        font-size: 1.25rem;
+    }
+
+    .patient-details-header {
+        gap: 0.75rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .patient-hero-content {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+    .patient-list-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .patient-main, .patient-details-wrapper {
+        padding: 0 0.5rem;
+    }
+
+    .patient-table th, .patient-table td {
+        padding: 0.5rem;
+        font-size: 0.85rem;
+    }
+
+    .patient-stat-card {
+        min-width: auto;
+        padding: 0.45rem 0.75rem;
+    }
+
+    .patient-modal-dialog {
+        max-width: 94%;
+    }
+}
+
+/* ===== Print adjustments ===== */
+@media print {
+    .patient-hero, .patient-list-header, .patient-modal, .medical-history-modal-content {
+        display: none !important;
+    }
+
+    body {
+        background: #fff;
+        color: #000;
+    }
+}

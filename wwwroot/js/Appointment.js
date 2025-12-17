@@ -5,11 +5,19 @@
 const ROLE = window.AppUserRole || "Admin";
 
 function apiGet(url, params, cb) {
-    $.getJSON(url, params || {}, cb);
+    $.getJSON(url, params || {}, cb)
+        .fail(xhr => {
+            console.error("GET failed", xhr);
+            $("#appts-error").removeClass("d-none").text("Request failed.");
+        });
 }
 
 function apiPost(url, data, cb) {
-    $.post(url, data || {}, cb);
+    $.post(url, data || {}, cb)
+        .fail(xhr => {
+            console.error("POST failed", xhr);
+            $("#appt-error").removeClass("d-none").text("Request failed.");
+        });
 }
 
 function formatDisplayDate(str) {
@@ -17,6 +25,17 @@ function formatDisplayDate(str) {
     const normalized = str.replace(" ", "T");
     const d = new Date(normalized);
     return isNaN(d.getTime()) ? str : d.toLocaleString();
+}
+
+function buildStatusPill(status) {
+    const s = (status || "").toLowerCase();
+    if (s === "completed") {
+        return `<span class="appts-status-pill appts-status-completed">Completed</span>`;
+    }
+    if (s === "cancelled") {
+        return `<span class="appts-status-pill appts-status-cancelled">Cancelled</span>`;
+    }
+    return `<span class="appts-status-pill appts-status-booked">Booked</span>`;
 }
 
 // Render main appointments table
@@ -33,27 +52,37 @@ function renderAppointmentsTable(appts) {
         const actionsCell = ROLE === "Patient"
             ? `<td></td>`
             : `<td>
-                <button class="btn btn-warning btn-sm"
-                        onclick="openEditAppointmentModal(${a.appointmentId})">
-                    Edit
-                </button>
-                <button class="btn btn-danger btn-sm"
-                        onclick="deleteAppointment(${a.appointmentId}, '${a.startTime}')">
-                    Delete
-                </button>
-            </td>`;
+                    <button class="btn btn-warning btn-sm"
+                            onclick="openEditAppointmentModal(${a.appointmentId})">
+                        Edit
+                    </button>
+                    <button class="btn btn-danger btn-sm mt-1 mt-md-0"
+                            onclick="deleteAppointment(${a.appointmentId}, '${a.startTime}')">
+                        Delete
+                    </button>
+               </td>`;
+
+        const statusPill = buildStatusPill(a.status);
 
         return `<tr>
             <td>${a.doctorName || ""}</td>
             ${patientCell}
             <td>${displayStart}</td>
             <td>${displayEnd}</td>
-            <td>${a.status}</td>
+            <td>${statusPill}</td>
             <td>${a.notes || ""}</td>
             ${actionsCell}
         </tr>`;
     }).join("");
-    $("#apptsTableBody").html(rows);
+
+    $("#apptsTableBody").html(rows || `<tr><td colspan="7" class="text-center text-muted py-4">No appointments found.</td></tr>`);
+
+    // Update small summary counters
+    const total = (appts || []).length;
+    const today = (appts || []).filter(a => (a.status || "").toLowerCase() === "booked").length;
+    $("#apptsCountSummary").text(`${total} appointment${total === 1 ? "" : "s"} loaded`);
+    $("#apptsTodayCount").text(today);
+    $("#apptsUpcomingCount").text(Math.max(total - today, 0));
 }
 
 // ====== INITIALIZATION ======
@@ -69,7 +98,7 @@ $(function () {
         $("#thPatient").hide();
         $(".appt-patient-row").hide();
         // hide status row in modal
-        $("#apptStatus").closest(".mb-2").hide();
+        $("#apptStatus").closest(".col-md-6").hide();
     }
 
     loadDoctorsAndPatients();
@@ -92,6 +121,8 @@ $(function () {
 // ====== DATA LOADING ======
 
 function fetchAndRenderAppointments() {
+    $("#appts-error").addClass("d-none").text("");
+
     const params = {
         date: $("#filterDate").val(),
         doctorId: $("#filterDoctor").val(),
@@ -102,20 +133,26 @@ function fetchAndRenderAppointments() {
 
 function loadDoctorsAndPatients() {
     apiGet("/Appointments/DoctorsList", null, function (doctors) {
-        let opts = '<option value="">All Doctors</option>';
+        let filterOpts = '<option value="">All Doctors</option>';
+        let modalOpts = '<option value="">Select Doctor</option>';
         (doctors || []).forEach(d => {
-            opts += `<option value="${d.doctorId}">${d.name}</option>`;
+            filterOpts += `<option value="${d.doctorId}">${d.name}</option>`;
+            modalOpts += `<option value="${d.doctorId}">${d.name}</option>`;
         });
-        $("#filterDoctor, #apptDoctor").html(opts);
+        $("#filterDoctor").html(filterOpts);
+        $("#apptDoctor").html(modalOpts);
     });
 
     if (ROLE !== "Patient") {
         apiGet("/Appointments/PatientsList", null, function (patients) {
-            let opts = '<option value="">All Patients</option>';
+            let filterOpts = '<option value="">All Patients</option>';
+            let modalOpts = '<option value="">Select Patient</option>';
             (patients || []).forEach(p => {
-                opts += `<option value="${p.patientId}">${p.name}</option>`;
+                filterOpts += `<option value="${p.patientId}">${p.name}</option>`;
+                modalOpts += `<option value="${p.patientId}">${p.name}</option>`;
             });
-            $("#filterPatient, #apptPatient").html(opts);
+            $("#filterPatient").html(filterOpts);
+            $("#apptPatient").html(modalOpts);
         });
     } else {
         $("#filterPatient").empty().hide();
@@ -128,18 +165,21 @@ function loadDoctorsAndPatients() {
 function openCreateAppointmentModal() {
     $("#apptModalLabel").text("Book/Add Appointment");
     $("#appt-error").addClass("d-none").text("");
-    $("#apptId, #apptDoctor, #apptStart, #apptEnd").val("");
+    $("#apptId").val("");
+    $("#apptDoctor").val("");
+    $("#apptPatient").val("");
+    $("#apptStart").val("");
+    $("#apptEnd").val("");
     $("#apptStatus").val("Booked");
     $("#apptNotes").val("");
     $("#doctorSlots").html("");
 
     if (ROLE === "Patient") {
         $(".appt-patient-row").hide();
-        $("#apptStatus").closest(".mb-2").hide();
+        $("#apptStatus").closest(".col-md-6").hide();
     } else {
-        $("#apptPatient").val("");
         $(".appt-patient-row").show();
-        $("#apptStatus").closest(".mb-2").show();
+        $("#apptStatus").closest(".col-md-6").show();
     }
 
     $("#apptModal").modal("show");
@@ -153,13 +193,17 @@ function openCreateAppointmentModal() {
         $("#apptDoctor").off("change").on("change", function () {
             showDoctorSlots($(this).val());
         });
+    } else {
+        $("#apptDoctor").off("change").on("change", function () {
+            showDoctorSlots($(this).val());
+        });
     }
 }
 
 function openEditAppointmentModal(id) {
     apiGet("/Appointments/GetAppointment", { id }, function (res) {
-        if (!res.success) {
-            $("#appt-error").removeClass("d-none").text("Failed to load.");
+        if (!res || !res.success) {
+            $("#appt-error").removeClass("d-none").text(res?.message || "Failed to load appointment.");
             return;
         }
         const a = res.appt;
@@ -169,16 +213,16 @@ function openEditAppointmentModal(id) {
         $("#apptStart").val(a.startTime);
         $("#apptEnd").val(a.endTime);
         $("#apptStatus").val(a.status);
-        $("#apptNotes").val(a.notes);
+        $("#apptNotes").val(a.notes || "");
         $("#doctorSlots").html("");
 
         if (ROLE === "Patient") {
             $(".appt-patient-row").hide();
-            $("#apptStatus").closest(".mb-2").hide();
+            $("#apptStatus").closest(".col-md-6").hide();
         } else {
             $("#apptPatient").val(a.patientId);
             $(".appt-patient-row").show();
-            $("#apptStatus").closest(".mb-2").show();
+            $("#apptStatus").closest(".col-md-6").show();
         }
 
         $("#apptModal").modal("show");
@@ -208,17 +252,16 @@ function saveAppointment() {
     };
 
     apiPost("/Appointments/SaveAppointment", data, function (res) {
-        if (res.success) {
+        if (res && res.success) {
             $("#apptModal").modal("hide");
             fetchAndRenderAppointments();
         } else {
-            $("#appt-error").removeClass("d-none").text(res.message || "Failed to save.");
+            $("#appt-error").removeClass("d-none").text(res?.message || "Failed to save appointment.");
         }
     });
 }
 
 function deleteAppointment(id, apptStart) {
-    const normalized = apptStart.replace(" ", "T");
     if (ROLE === "Patient") {
         alert("You are not allowed to delete appointments.");
         return;
@@ -226,10 +269,11 @@ function deleteAppointment(id, apptStart) {
     if (!confirm("Delete this appointment?")) return;
 
     apiPost("/Appointments/DeleteAppointment", { appointmentId: id }, function (res) {
-        if (res.success) {
+        if (res && res.success) {
             fetchAndRenderAppointments();
+        } else {
+            alert(res?.message || "Failed to delete appointment.");
         }
-        else alert(res.message || "Failed to delete.");
     });
 }
 
@@ -237,7 +281,10 @@ function deleteAppointment(id, apptStart) {
 
 function showDoctorSlots(doctorId) {
     $("#doctorSlots").html("Loading...");
-    if (!doctorId) { $("#doctorSlots").html(""); return; }
+    if (!doctorId) {
+        $("#doctorSlots").html("");
+        return;
+    }
 
     apiGet("/Appointments/DoctorAppointments", { doctorId }, function (data) {
         if (!data || !data.length) {

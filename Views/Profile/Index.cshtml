@@ -2,87 +2,148 @@
     ViewData["Title"] = "Profile";
 }
 
-<h2>My Profile</h2>
+<link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/profile.css" asp-append-version="true" />
 
-<div id="profile-error" class="alert alert-danger d-none"></div>
-<div id="profile-success" class="alert alert-success d-none"></div>
+<div class="profile-wrapper">
+    <div id="profile-error" class="alert alert-danger d-none"></div>
+    <div id="profile-success" class="alert alert-success d-none"></div>
 
-<div class="card mb-3">
-    <div class="card-header">
-        Basic Information
-    </div>
-    <div class="card-body">
-        <div class="mb-3">
-            <label for="pf-fullName" class="form-label">Full Name</label>
-            <input type="text" id="pf-fullName" class="form-control" />
+    <!-- Profile Hero Section -->
+    <div class="profile-hero">
+        <div class="profile-hero-bg"></div>
+        <div class="profile-avatar-section">
+            <div class="profile-avatar">
+                <!-- This SVG is fine and simple -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                </svg>
+            </div>
+            <div class="profile-header-info">
+                <h1 class="profile-name" id="profile-display-name">Loading...</h1>
+                <p class="profile-role-badge" id="profile-display-role">
+                    <span class="role-icon">●</span>
+                    <span id="pf-role-text">User</span>
+                </p>
+            </div>
         </div>
-        <div class="mb-3">
-            <label for="pf-email" class="form-label">Email</label>
-            <input type="email" id="pf-email" class="form-control" />
-        </div>
-        <button type="button" id="pf-saveProfileBtn" class="btn btn-primary">Save Profile</button>
     </div>
-</div>
 
-<!-- Patient-only section -->
-<div id="pf-patient-section" class="card mb-3 d-none">
-    <div class="card-header">
-        Patient Details
-    </div>
-    <div class="card-body">
-        <div class="mb-3">
-            <label for="pf-age" class="form-label">Age</label>
-            <input type="number" id="pf-age" class="form-control" min="0" />
-        </div>
-        <div class="mb-3">
-            <label for="pf-gender" class="form-label">Gender</label>
-            <input type="text" id="pf-gender" class="form-control" />
-        </div>
-        <div class="mb-3">
-            <label for="pf-contactInfo" class="form-label">Contact Info</label>
-            <input type="text" id="pf-contactInfo" class="form-control" />
-        </div>
-        <button type="button" id="pf-savePatientBtn" class="btn btn-primary">Save Patient Details</button>
-    </div>
-</div>
+    <!-- Profile Content -->
+    <div class="container profile-container">
+        <div class="profile-grid">
 
-<!-- Doctor-only section -->
-<div id="pf-doctor-section" class="card mb-3 d-none">
-    <div class="card-header">
-        Doctor Details
-    </div>
-    <div class="card-body">
-        <div class="mb-3">
-            <label for="pf-specialty" class="form-label">Specialty</label>
-            <input type="text" id="pf-specialty" class="form-control" />
-        </div>
-        <div class="mb-3">
-            <label for="pf-doctorPhone" class="form-label">Phone Number</label>
-            <input type="text" id="pf-doctorPhone" class="form-control" />
-        </div>
-        <button type="button" id="pf-saveDoctorBtn" class="btn btn-primary">Save Doctor Details</button>
-    </div>
-</div>
+            <!-- Left Column - Basic Information -->
+            <div class="profile-column">
+                <div class="card profile-card">
+                    <div class="card-header profile-card-header">
+                        <h3>Basic Information</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="pf-fullName" class="form-label">
+                                Full Name
+                            </label>
+                            <input type="text" id="pf-fullName" class="form-control" placeholder="Enter your full name" />
+                        </div>
+                        <div class="form-group">
+                            <label for="pf-email" class="form-label">
+                                Email Address
+                            </label>
+                            <input type="email" id="pf-email" class="form-control" placeholder="your@email.com" />
+                        </div>
+                        <button type="button" id="pf-saveProfileBtn" class="btn btn-primary btn-block">
+                            Save Profile
+                        </button>
+                    </div>
+                </div>
+            </div>
 
-<!-- Patient medical histories -->
-<div id="pf-medicalHistories-card" class="card mb-3 d-none">
-    <div class="card-header">
-        Medical Histories
-    </div>
-    <div class="card-body">
-        <table class="table table-sm table-striped">
-            <thead>
-                <tr>
-                    <th>Diagnosis</th>
-                    <th>Description</th>
-                    <th>Created At</th>
-                    <th>Updated At</th>
-                </tr>
-            </thead>
-            <tbody id="pf-medicalHistoriesBody">
-                <!-- filled by JS -->
-            </tbody>
-        </table>
+            <!-- Right Column - Role Specific Information -->
+            <div class="profile-column">
+
+                <!-- Patient Section -->
+                <div id="pf-patient-section" class="card profile-card d-none">
+                    <div class="card-header profile-card-header">
+                        <h3>Patient Details</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="profile-info-row">
+                            <div class="form-group flex-1">
+                                <label for="pf-age" class="form-label">
+                                    Age
+                                </label>
+                                <input type="number" id="pf-age" class="form-control" min="0" placeholder="Age" />
+                            </div>
+                            <div class="form-group flex-1">
+                                <label for="pf-gender" class="form-label">
+                                    Gender
+                                </label>
+                                <input type="text" id="pf-gender" class="form-control" placeholder="Gender" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="pf-contactInfo" class="form-label">
+                                Contact Info
+                            </label>
+                            <input type="text" id="pf-contactInfo" class="form-control" placeholder="Phone number or contact" />
+                        </div>
+                        <button type="button" id="pf-savePatientBtn" class="btn btn-secondary btn-block">
+                            Save Patient Details
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Doctor Section -->
+                <div id="pf-doctor-section" class="card profile-card d-none">
+                    <div class="card-header profile-card-header">
+                        <h3>Doctor Details</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="pf-specialty" class="form-label">
+                                Specialty
+                            </label>
+                            <input type="text" id="pf-specialty" class="form-control" placeholder="Medical specialty" />
+                        </div>
+                        <div class="form-group">
+                            <label for="pf-doctorPhone" class="form-label">
+                                Phone Number
+                            </label>
+                            <input type="text" id="pf-doctorPhone" class="form-control" placeholder="Contact phone" />
+                        </div>
+                        <button type="button" id="pf-saveDoctorBtn" class="btn btn-accent btn-block">
+                            Save Doctor Details
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Medical Histories Section (Full Width) -->
+        <div id="pf-medicalHistories-card" class="card profile-card medical-history-card d-none">
+            <div class="card-header profile-card-header">
+                <h3>Medical History</h3>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="profile-table">
+                        <thead>
+                            <tr>
+                                <th>Diagnosis</th>
+                                <th>Description</th>
+                                <th>Created At</th>
+                                <th>Updated At</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pf-medicalHistoriesBody">
+                            <!-- filled by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>About Us - MediConnect</title>
+
+    <!-- Absolute path to CSS so static file is requested from wwwroot -->
+    <link rel="stylesheet" href="/css/consultation-style.css" />
+</head>
+<body>
+    <!-- Scroll to Top Button -->
+    <button id="scrollTopBtn" class="scroll-top-btn" title="Go to top">↑</button>
+
+    <!-- Login Modal (kept hidden; Login link goes to /Login/Index) -->
+    <div id="loginModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Login to MediConnect</h2>
+            <form id="loginForm" class="modal-form">
+                <input type="email" id="loginEmail" placeholder="Email Address" autocomplete="username" required />
+                <input type="password" id="loginPassword" placeholder="Password" autocomplete="current-password" required />
+                <button type="submit" class="btn-primary">Login</button>
+                <p class="form-note">Don't have an account? <a href="/Home/Contact" id="showSignup">Sign up</a></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Success Message -->
+    <div id="successMessage" class="success-message" style="display:none;"><span id="successText">Success!</span></div>
+
+    <!-- Header/Navigation -->
+    <header>
+        <nav class="navbar">
+            <div class="logo"><h1>MediConnect</h1></div>
+            <ul class="nav-links">
+                <li><a href="/Home/Index">Home</a></li>
+                <li><a href="/Home/Services">Services</a></li>
+                <li><a href="/Home/Doctors">Doctors</a></li>
+                <li><a href="/Home/About" class="active">About</a></li>
+                <li><a href="/Home/Contact">Contact</a></li>
+            </ul>
+
+            <!-- Login redirects to /Login/Index -->
+            <a href="/Login/Index" class="login-btn">Login</a>
+        </nav>
+    </header>
+
+    <!-- Page Header -->
+    <section class="page-header">
+        <h1>About MediConnect</h1>
+        <p>Revolutionizing healthcare accessibility for everyone</p>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="about-content">
+            <h2>Our Mission</h2>
+            <p>
+                We are dedicated to making healthcare accessible to everyone. Our
+                platform connects patients with qualified doctors for convenient
+                online consultations, breaking down barriers of distance and time.
+            </p>
+            <p>
+                With MediConnect, you can get medical advice, prescriptions, and
+                follow-up care without leaving your home. We believe that quality
+                healthcare should be available to all, regardless of location or
+                circumstances.
+            </p>
+        </div>
+    </section>
+
+    <!-- Our Story Section -->
+    <section class="our-story">
+        <div class="story-container">
+            <div class="story-content">
+                <h2>Our Story</h2>
+                <p>
+                    Founded in 2020, MediConnect was born from a simple observation:
+                    access to quality healthcare was becoming increasingly difficult,
+                    especially in remote areas and during emergencies.
+                </p>
+                <p>
+                    Our founders, a team of healthcare professionals and technology
+                    experts, came together to create a platform that would bridge this
+                    gap. Today, we've helped over 100,000 patients connect with
+                    certified doctors across the country.
+                </p>
+                <p>
+                    We continue to innovate and expand our services, always keeping
+                    patient care and accessibility at the heart of everything we do.
+                </p>
+            </div>
+            <div class="story-image">
+                <div class="placeholder-image"><p>🏥</p></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Values Section -->
+    <section class="our-values">
+        <h2>Our Core Values</h2>
+        <div class="values-grid">
+            <div class="value-card">
+                <div class="value-icon">🎯</div>
+                <h3>Patient-Centered</h3>
+                <p>Your health and satisfaction are our top priorities.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">🤝</div>
+                <h3>Integrity</h3>
+                <p>We maintain the highest standards of ethics and professionalism.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">💡</div>
+                <h3>Innovation</h3>
+                <p>We continuously embrace new technologies to improve care.</p>
+            </div>
+            <div class="value-card">
+                <div class="value-icon">🌍</div>
+                <h3>Accessibility</h3>
+                <p>We make quality healthcare available to everyone, everywhere.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics, Team, CTA, Footer (kept minimal) -->
+    <section class="statistics">
+        <h2>Our Impact in Numbers</h2>
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-number">100K+</div><div class="stat-label">Patients Served</div></div>
+            <div class="stat-card"><div class="stat-number">500+</div><div class="stat-label">Certified Doctors</div></div>
+            <div class="stat-card"><div class="stat-number">50K+</div><div class="stat-label">Consultations Completed</div></div>
+            <div class="stat-card"><div class="stat-number">4.9/5</div><div class="stat-label">Average Rating</div></div>
+        </div>
+    </section>
+
+    <section class="team-section">
+        <h2>Meet Our Leadership Team</h2>
+        <div class="team-grid">
+            <div class="team-card"><div class="team-image">👨‍💼</div><h3>Dr. Youssef Ahmed</h3><p class="team-role">Founder & CEO</p></div>
+            <div class="team-card"><div class="team-image">👩‍💼</div><h3>Nadia Hassan</h3><p class="team-role">Chief Technology Officer</p></div>
+            <div class="team-card"><div class="team-image">👨‍💼</div><h3>Dr. Karim Mahmoud</h3><p class="team-role">Chief Medical Officer</p></div>
+        </div>
+    </section>
+
+    <section class="cta-section">
+        <h2>Ready to Experience Better Healthcare?</h2>
+        <div class="cta-buttons">
+            <a href="/Home/Doctors" class="btn-primary">Find a Doctor</a>
+            <a href="/Home/Contact" class="btn-secondary">Contact Us</a>
+        </div>
+    </section>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>MediConnect</h3>
+                <p>Your trusted online healthcare partner</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="/Home/Index">Home</a></li>
+                    <li><a href="/Home/Services">Services</a></li>
+                    <li><a href="/Home/Doctors">Doctors</a></li>
+                    <li><a href="/Home/About">About</a></li>
+                    <li><a href="/Home/Contact">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contact Info</h4>
+                <p>Email: info@mediconnect.com</p>
+                <p>Phone: +20 123 456 7890</p>
+            </div>
+        </div>
+        <div class="footer-bottom"><p>&copy; 2025 MediConnect. All rights reserved.</p></div>
+    </footer>
+
+    <!-- Absolute path to JS so static file is requested -->
+    <script src="/js/consultation-script.js" defer></script>
+</body>
+</html>

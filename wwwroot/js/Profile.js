@@ -2,10 +2,13 @@
 
 function pfShowError(msg) {
     $("#profile-error").text(msg).removeClass("d-none");
+    setTimeout(() => $("#profile-error").addClass("d-none"), 4000);
 }
+
 function pfClearError() {
     $("#profile-error").text("").addClass("d-none");
 }
+
 function pfShowSuccess(msg) {
     $("#profile-success").text(msg).removeClass("d-none");
     setTimeout(() => $("#profile-success").addClass("d-none"), 2000);
@@ -54,6 +57,10 @@ function loadProfile() {
         const user = data.user;
         $("#pf-role").val(user.role || "");
 
+        // Update header display
+        $("#profile-display-name").text(user.fullName || "User");
+        $("#pf-role-text").text(user.role || "User");
+
         // Basic user info
         $("#pf-fullName").val(user.fullName || "");
         $("#pf-email").val(user.email || "");
@@ -79,7 +86,7 @@ function loadProfile() {
                         <td>${updated}</td>
                     </tr>`;
                 }).join("");
-                $("#pf-medicalHistoriesBody").html(rows || "<tr><td colspan='4'>No records.</td></tr>");
+                $("#pf-medicalHistoriesBody").html(rows || "<tr><td colspan='4' style='text-align: center; padding: var(--space-8); color: var(--text-tertiary);'>No medical history records found.</td></tr>");
             }
         }
 
@@ -102,7 +109,9 @@ function saveBasicProfile() {
         { fullName, email },
         function (res) {
             if (res && res.success) {
-                pfShowSuccess("Profile saved.");
+                pfShowSuccess("Profile saved successfully!");
+                // Update header display
+                $("#profile-display-name").text(fullName || "User");
             } else {
                 pfShowError(res?.message || "Failed to save profile.");
             }
@@ -119,7 +128,7 @@ function savePatientDetails() {
         { age, gender, contactInfo },
         function (res) {
             if (res && res.success) {
-                pfShowSuccess("Patient details saved.");
+                pfShowSuccess("Patient details saved successfully!");
             } else {
                 pfShowError(res?.message || "Failed to save patient details.");
             }
@@ -135,7 +144,7 @@ function saveDoctorDetails() {
         { specialty, phoneNumber },
         function (res) {
             if (res && res.success) {
-                pfShowSuccess("Doctor details saved.");
+                pfShowSuccess("Doctor details saved successfully!");
             } else {
                 pfShowError(res?.message || "Failed to save doctor details.");
             }

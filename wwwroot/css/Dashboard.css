@@ -1,0 +1,391 @@
+﻿/* wwwroot/css/dashboard.css */
+
+/* ===== Layout wrappers ===== */
+
+.dashboard-page-wrapper {
+    min-height: 100vh;
+    background: var(--bg-secondary);
+    padding-bottom: var(--space-16);
+}
+
+/* ===== Hero ===== */
+
+.dashboard-hero {
+    position: relative;
+    overflow: hidden;
+    padding: var(--space-12) 0 var(--space-10);
+    margin-bottom: var(--space-8);
+}
+
+.dashboard-hero-bg {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at top left, var(--secondary-500), transparent 55%), radial-gradient(circle at top right, var(--accent-500), transparent 60%), linear-gradient(135deg, var(--primary-600), var(--primary-500));
+    opacity: 0.97;
+}
+
+.dashboard-hero-content {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: var(--space-8);
+    color: var(--text-inverse);
+}
+
+.dashboard-hero-text h1 {
+    font-size: var(--font-size-4xl);
+    font-weight: var(--font-extrabold);
+    margin-bottom: var(--space-3);
+}
+
+.dashboard-hero-text p {
+    margin: 0;
+    max-width: 520px;
+    color: rgba(255, 255, 255, 0.92);
+}
+
+.dashboard-hero-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+}
+
+/* Role-based subtle colors */
+
+.dashboard-page-wrapper[data-role="Doctor"] .dashboard-hero-bg {
+    background: linear-gradient(135deg, var(--primary-600), var(--secondary-500));
+}
+
+.dashboard-page-wrapper[data-role="Patient"] .dashboard-hero-bg {
+    background: linear-gradient(135deg, var(--secondary-500), var(--accent-500));
+}
+
+.dashboard-page-wrapper[data-role="Admin"] .dashboard-hero-bg {
+    background: linear-gradient(135deg, var(--primary-800), var(--accent-700));
+}
+
+/* Statistic cards in hero */
+
+.dash-stat-card {
+    min-width: 140px;
+    padding: var(--space-3) var(--space-4);
+    border-radius: var(--radius-lg);
+    background: rgba(15, 23, 42, 0.35);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.dash-stat-highlight {
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.5);
+}
+
+.dash-stat-label {
+    display: block;
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    opacity: 0.8;
+    margin-bottom: var(--space-1);
+}
+
+.dash-stat-value {
+    display: block;
+    font-size: var(--font-size-2xl);
+    font-weight: var(--font-bold);
+}
+
+.dash-stat-caption {
+    display: block;
+    margin-top: var(--space-1);
+    font-size: var(--font-size-xs);
+    opacity: 0.85;
+}
+
+/* ===== Main Area ===== */
+
+.dashboard-main {
+    position: relative;
+    z-index: 2;
+}
+
+/* Notifications column */
+
+.dashboard-notifications .widget {
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-md);
+    background: var(--surface);
+    padding: var(--space-5);
+    margin-bottom: var(--space-4);
+}
+
+.dashboard-notifications h5 {
+    margin-bottom: var(--space-3);
+    font-size: var(--font-size-lg);
+}
+
+.dashboard-notifications ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.dashboard-notifications li + li {
+    margin-top: var(--space-2);
+}
+
+/* Mini donut chart widget */
+
+.widget-mini-chart {
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-md);
+    background: var(--surface);
+    padding: var(--space-5);
+}
+
+    .widget-mini-chart h6 {
+        margin-bottom: var(--space-3);
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-semibold);
+    }
+
+.mini-donut {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.mini-donut-circle {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    background: conic-gradient( var(--primary-500) 0deg 120deg, var(--success) 120deg 210deg, var(--error) 210deg 360deg );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.mini-donut-fill {
+    /* We will adjust opacity / transform from JS by percentages if desired */
+}
+
+.mini-donut-circle::after {
+    content: "";
+    position: absolute;
+    inset: 14px;
+    background: var(--surface);
+    border-radius: 50%;
+}
+
+.mini-donut-center {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+}
+
+    .mini-donut-center span {
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-bold);
+        color: var(--primary-700);
+    }
+
+.mini-donut-legend {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    font-size: var(--font-size-xs);
+}
+
+    .mini-donut-legend .dot {
+        display: inline-block;
+        width: 10px;
+        height: 10px;
+        border-radius: 999px;
+        margin-right: var(--space-1);
+    }
+
+        .mini-donut-legend .dot.booked {
+            background: var(--primary-500);
+        }
+
+        .mini-donut-legend .dot.completed {
+            background: var(--success);
+        }
+
+        .mini-donut-legend .dot.cancelled {
+            background: var(--error);
+        }
+
+/* Dashboard widgets (right) */
+
+.dashboard-widgets .widget {
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-md);
+    background: var(--surface);
+    padding: var(--space-5);
+    margin-bottom: var(--space-4);
+    position: relative;
+    overflow: hidden;
+}
+
+    .dashboard-widgets .widget::before {
+        content: '';
+        position: absolute;
+        inset-inline-end: -20%;
+        inset-block-start: -40%;
+        width: 60%;
+        height: 140%;
+        background: radial-gradient(circle at top, rgba(129, 140, 248, 0.18), transparent 60%);
+        pointer-events: none;
+    }
+
+.dashboard-widgets h5 {
+    margin-bottom: var(--space-3);
+    font-size: var(--font-size-lg);
+}
+
+.dashboard-widgets ul {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+    .dashboard-widgets ul li + li {
+        margin-top: var(--space-2);
+    }
+
+/* Stats big number */
+
+.dashboard-widgets .stats {
+    font-size: var(--font-size-3xl);
+    font-weight: var(--font-extrabold);
+    color: var(--primary-600);
+}
+
+/* Bar graph style (per item) */
+
+.graph-list {
+    list-style: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.graph-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+    margin-bottom: var(--space-2);
+    font-size: var(--font-size-sm);
+}
+
+.graph-item-label {
+    flex: 0 0 auto;
+}
+
+.graph-bar {
+    flex: 1 1 auto;
+    height: 6px;
+    border-radius: 999px;
+    background: var(--bg-tertiary);
+    overflow: hidden;
+    margin: 0 var(--space-2);
+}
+
+.graph-bar-fill {
+    height: 100%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--primary-500), var(--accent-500));
+}
+
+/* Tables */
+
+.dashboard-widgets table {
+    font-size: var(--font-size-sm);
+}
+
+.dashboard-widgets thead {
+    background: var(--bg-tertiary);
+}
+
+/* Responsive */
+
+@media (max-width: 992px) {
+    .dashboard-hero-content {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .dashboard-hero-meta {
+        margin-top: var(--space-4);
+    }
+}
+/* ===== Enhanced styling for "Today's Appointments" table ===== */
+
+.dashboard-widgets .widget-appointments {
+    /* optional: add a specific class on the widget div if you like */
+}
+
+.dashboard-widgets .widget table {
+    border-collapse: separate;
+    border-spacing: 0;
+    width: 100%;
+}
+
+    .dashboard-widgets .widget table thead th {
+        font-size: var(--font-size-xs);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        font-weight: var(--font-semibold);
+        color: var(--text-secondary);
+        padding: 0.5rem 0.75rem;
+        border-bottom: 1px solid var(--gray-200);
+    }
+
+    .dashboard-widgets .widget table tbody td {
+        font-size: var(--font-size-sm);
+        padding: 0.5rem 0.75rem;
+        border-bottom: 1px solid var(--gray-100);
+        vertical-align: middle;
+    }
+
+    .dashboard-widgets .widget table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .dashboard-widgets .widget table tbody tr {
+        transition: background-color var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+
+        .dashboard-widgets .widget table tbody tr:hover {
+            background-color: var(--primary-50);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(15, 23, 42, 0.08);
+        }
+
+/* Optional status pill if you ever add a Status column */
+.appointment-status-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.1rem 0.6rem;
+    border-radius: 999px;
+    font-size: var(--font-size-xs);
+    font-weight: var(--font-medium);
+}
+
+    .appointment-status-pill.booked {
+        background: #e0f2fe;
+        color: #0369a1;
+    }
+
+    .appointment-status-pill.completed {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .appointment-status-pill.cancelled {
+        background: #fee2e2;
+        color: #b91c1c;
+    }

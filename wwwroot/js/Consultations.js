@@ -43,14 +43,21 @@ function loadRunningAppointments() {
             return;
         }
 
+        let activeCount = 0;
+        let completedCount = 0;
+
         const rows = data.map(a => {
             const s = a.startTime ? new Date(a.startTime) : null;
             const e = a.endTime ? new Date(a.endTime) : null;
             const start = s ? s.toLocaleString() : "";
             const end = e ? e.toLocaleString() : "";
+            const status = a.status || "";
+
+            if (status === "Completed") completedCount++;
+            else activeCount++;
 
             let actionCell = "";
-            if (a.status === "Completed") {
+            if (status === "Completed") {
                 actionCell = `<span class="badge bg-success">Completed</span>`;
             } else {
                 actionCell = `<button class="btn btn-primary btn-sm" onclick="joinChat(${a.appointmentId})">
@@ -63,12 +70,18 @@ function loadRunningAppointments() {
                 <td>${a.patientName || ""}</td>
                 <td>${start}</td>
                 <td>${end}</td>
-                <td>${a.status || ""}</td>
+                <td>${status}</td>
                 <td>${actionCell}</td>
             </tr>`;
         }).join("");
 
-        $("#runningAppointmentsBody").html(rows || "<tr><td colspan='6'>No running appointments.</td></tr>");
+        $("#runningAppointmentsBody").html(rows || "<tr><td colspan='6' class='text-center text-muted py-4'>No running appointments.</td></tr>");
+
+        // update hero stats + summary
+        $("#consultActiveCount").text(activeCount);
+        $("#consultCompletedCount").text(completedCount);
+        const total = activeCount + completedCount;
+        $("#consultSummary").text(`${total} consultation${total === 1 ? "" : "s"} loaded`);
     });
 }
 
@@ -92,7 +105,7 @@ function joinChat(appointmentId) {
         consultationModalInstance.show();
 
         lastMessageId = 0;
-        $("#m-chatMessages").html("<em>Loading messages...</em>");
+        $("#m-chatMessages").html("<em>No messages yet.</em>");
         startPollingMessages();
     });
 }

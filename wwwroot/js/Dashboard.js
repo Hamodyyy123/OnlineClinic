@@ -1,29 +1,108 @@
 ﻿// wwwroot/js/UserDashboard.js
 
 document.addEventListener("DOMContentLoaded", function () {
-    let role = window.currentUserRole;
+    const role = window.currentUserRole;
     let apiEndpoint = "";
 
     if (role === "Doctor") apiEndpoint = "/Dashboard/GetDoctorData";
     else if (role === "Admin") apiEndpoint = "/Dashboard/GetAdminData";
     else apiEndpoint = "/Dashboard/GetPatientData";
 
+    const wrapper = document.querySelector(".dashboard-page-wrapper");
+    if (wrapper) wrapper.setAttribute("data-role", role || "");
+
     fetch(apiEndpoint)
         .then(r => r.json())
-        .then(data => renderRoleDashboard(role, data))
+        .then(data => {
+            updateHeroCounters(role, data);
+            updateMiniChart(role, data);
+            renderRoleDashboard(role, data);
+        })
         .catch(err => showError(err));
 });
 
 function showError(err) {
     console.error(err);
-    document.getElementById("dashboard-widgets").innerHTML =
-        `<div class="alert alert-danger">Error loading dashboard data. Please try again later.</div>`;
+    const el = document.getElementById("dashboard-widgets");
+    if (el) {
+        el.innerHTML =
+            `<div class="alert alert-danger">Error loading dashboard data. Please try again later.</div>`;
+    }
 }
 
-// --------- Dashboard Rendering ---------
+/* ===== Hero main counter ===== */
+
+function updateHeroCounters(role, data) {
+    const mainValue = document.getElementById("dash-main-value");
+    const mainCaption = document.getElementById("dash-main-caption");
+    if (!mainValue || !mainCaption) return;
+
+    if (role === "Doctor") {
+        const s = data.stats || {};
+        mainValue.textContent = s.todaysAppointments ?? s.assignedPatients ?? "-";
+        mainCaption.textContent = s.todaysAppointments != null
+            ? "Appointments today"
+            : "Assigned patients";
+    } else if (role === "Patient") {
+        const app = data.nextAppointment || {};
+        if (app.date || app.Date) {
+            mainValue.textContent = "1";
+            mainCaption.textContent = "Upcoming appointment";
+        } else {
+            mainValue.textContent = "0";
+            mainCaption.textContent = "No upcoming appointments";
+        }
+    } else if (role === "Admin") {
+        const s = data.stats || {};
+        mainValue.textContent = s.appointmentsToday ?? s.doctors ?? "-";
+        mainCaption.textContent = s.appointmentsToday != null
+            ? "Appointments today"
+            : "Active doctors";
+    } else {
+        mainValue.textContent = "-";
+        mainCaption.textContent = "Overview";
+    }
+}
+
+/* ===== Mini donut chart for appointments ===== */
+
+function updateMiniChart(role, data) {
+    const center = document.getElementById("mini-donut-value");
+    if (!center) return;
+
+    let booked = 0, completed = 0, cancelled = 0;
+
+    if (role === "Admin" || role === "Doctor") {
+        const s = data.stats || {};
+        booked = s.appointmentsBooked ?? 0;
+        completed = s.appointmentsCompleted ?? 0;
+        cancelled = s.appointmentsCancelled ?? 0;
+
+        if (!booked && !completed && !cancelled && Array.isArray(data.appointmentsToday)) {
+            data.appointmentsToday.forEach(a => {
+                const status = (a.Status || a.status || "").toLowerCase();
+                if (status === "completed") completed++;
+                else if (status === "cancelled") cancelled++;
+                else booked++;
+            });
+        }
+    } else if (role === "Patient") {
+        const app = data.nextAppointment || {};
+        if (app.date || app.Date) booked = 1;
+    }
+
+    const total = booked + completed + cancelled;
+    center.textContent = total;
+
+    const donut = document.querySelector(".mini-donut-circle");
+    if (donut) {
+        donut.style.opacity = total ? "1" : "0.4";
+    }
+}
+
+/* ===== Dashboard Rendering (common notifications) ===== */
 
 function renderRoleDashboard(role, data) {
-    // Notifications (common) – doctor/patient
     if (data.notifications && data.notifications.length) {
         document.getElementById("notifications-widget").innerHTML =
             renderNotificationsWidget(data.notifications);
@@ -43,10 +122,7 @@ function renderRoleDashboard(role, data) {
     }
 }
 
-// -------- WIDGET BUILDERS --------
-
 function renderNotificationsWidget(list) {
-    // Special "consultation running now" message => clickable
     const items = list.map(n => {
         if (typeof n === "string" && n.toLowerCase().includes("consultation is running now")) {
             return `<li><a href="/Consultations">A consultation is running now. Click to open.</a></li>`;
@@ -54,27 +130,28 @@ function renderNotificationsWidget(list) {
         return `<li>${n}</li>`;
     }).join("");
 
-    return `<div class="widget notifications">
+    return `<div class="widget">
         <h5>Notifications</h5>
         <ul>${items}</ul>
     </div>`;
 }
 
 function renderAlertsWidget(list) {
-    return `<div class="widget alerts">
+    return `<div class="widget">
         <h5>Alerts</h5>
         <ul>${list.map(a => `<li>${a}</li>`).join('')}</ul>
     </div>`;
 }
 
-// ------------ DOCTOR DASH -------------
+/* ===== Doctor dashboard with bar graph ===== */
+
 function renderDoctorDashboard(d) {
     const upcomingList = Array.isArray(d.upcomingAppointments) ? d.upcomingAppointments : [];
     const scheduleList = Array.isArray(d.todaysSchedule) ? d.todaysSchedule : [];
+    const stats = d.stats || {};
 
     const upcomingHtml = upcomingList.length
         ? upcomingList.map(a => {
-            // Match server JSON: { time, span, patient, description }
             const span = a.span || a.time || "";
             const patient = a.patient || "";
             const desc = a.description ? ` (${a.description})` : "";
@@ -91,7 +168,12 @@ function renderDoctorDashboard(d) {
         }).join("")
         : "<li>No appointments today.</li>";
 
-    let widgets = `
+    const bookedToday = stats.todaysAppointments ?? 0;
+    const completedToday = stats.completedToday ?? 0;
+    const totalDay = bookedToday + completedToday;
+    const completedPct = totalDay ? Math.round((completedToday / totalDay) * 100) : 0;
+
+    const widgets = `
     <div class="row">
       <div class="col-md-6">
         <div class="widget">
@@ -105,8 +187,20 @@ function renderDoctorDashboard(d) {
       </div>
       <div class="col-md-6">
         <div class="widget">
-          <h5>Assigned Patients</h5>
-          <div class="stats">${d.stats ? d.stats.assignedPatients : "-"}</div>
+          <h5>Workload Overview</h5>
+          <ul class="graph-list">
+            <li class="graph-item">
+              <span class="graph-item-label">Completed Today</span>
+              <div class="graph-bar">
+                <div class="graph-bar-fill" style="width:${completedPct}%;"></div>
+              </div>
+              <span>${completedToday}/${totalDay || 0}</span>
+            </li>
+            <li class="graph-item">
+              <span class="graph-item-label">Assigned Patients</span>
+              <span class="stats">${stats.assignedPatients ?? "-"}</span>
+            </li>
+          </ul>
         </div>
         <div class="widget">
           <h5>Quick Links</h5>
@@ -116,17 +210,17 @@ function renderDoctorDashboard(d) {
           </ul>
         </div>
       </div>
-    </div>
-    `;
+    </div>`;
     document.getElementById("dashboard-widgets").innerHTML = widgets;
 }
 
-// ------------ PATIENT DASH -------------
+/* ===== Patient dashboard ===== */
+
 function renderPatientDashboard(d) {
     const app = d.nextAppointment || {};
     const doctor = d.assignedDoctor || {};
 
-    const hasAppointment = !!app.date || !!app.Date; // handle camelCase or PascalCase from server
+    const hasAppointment = !!app.date || !!app.Date;
     const date = app.date || app.Date || "";
     const span = app.span || app.Span || app.time || app.Time || "";
     const docName = app.doctor || app.Doctor || "";
@@ -138,8 +232,9 @@ function renderPatientDashboard(d) {
     }
 
     const assignedDoctorName = doctor.name || doctor.Name || "No assigned doctor.";
+    const stats = d.stats || {};
 
-    let widgets = `
+    const widgets = `
     <div class="row">
       <div class="col-md-6">
         <div class="widget">
@@ -153,6 +248,19 @@ function renderPatientDashboard(d) {
       </div>
       <div class="col-md-6">
         <div class="widget">
+          <h5>Your Activity</h5>
+          <ul class="graph-list">
+            <li class="graph-item">
+              <span class="graph-item-label">Completed Appointments</span>
+              <span class="stats">${stats.completedAppointments ?? "-"}</span>
+            </li>
+            <li class="graph-item">
+              <span class="graph-item-label">Open Requests</span>
+              <span class="stats">${stats.openRequests ?? "-"}</span>
+            </li>
+          </ul>
+        </div>
+        <div class="widget">
           <h5>Quick Links</h5>
           <ul>
             <li><a href="${d.links ? d.links.requestAppointment : "#"}">Request Appointment</a></li>
@@ -164,40 +272,63 @@ function renderPatientDashboard(d) {
     document.getElementById("dashboard-widgets").innerHTML = widgets;
 }
 
-// ------------- ADMIN DASH --------------
-function renderAdminDashboard(d) {
-    let s = d.stats || {};
-    let l = d.links || {};
-    let apptsToday = Array.isArray(d.appointmentsToday) ? d.appointmentsToday : [];
+/* ===== Admin dashboard (fixed to handle camelCase) ===== */
 
-    let apptRows = apptsToday.length
+function renderAdminDashboard(d) {
+    const s = d.stats || {};
+    const l = d.links || {};
+    const apptsToday = Array.isArray(d.appointmentsToday) ? d.appointmentsToday : [];
+
+    const apptRows = apptsToday.length
         ? apptsToday.map(a => {
-            const start = a.StartTime ? new Date(a.StartTime).toLocaleTimeString() : "";
-            const end = a.EndTime ? new Date(a.EndTime).toLocaleTimeString() : "";
+            const startRaw = a.StartTime || a.startTime;
+            const endRaw = a.EndTime || a.endTime;
+            const start = startRaw ? new Date(startRaw).toLocaleTimeString() : "";
+            const end = endRaw ? new Date(endRaw).toLocaleTimeString() : "";
+            const doctorName = a.DoctorName || a.doctorName || "";
+            const patientName = a.PatientName || a.patientName || "";
+            const notes = a.Notes || a.notes || "";
             return `<tr>
                 <td>${start} - ${end}</td>
-                <td>${a.DoctorName || ""}</td>
-                <td>${a.PatientName || ""}</td>
-                <td>${a.Notes || ""}</td>
+                <td>${doctorName}</td>
+                <td>${patientName}</td>
+                <td>${notes}</td>
             </tr>`;
         }).join("")
         : `<tr><td colspan="4">No appointments today.</td></tr>`;
 
-    let topDoctorText = s.highestWorkingDoctorName
-        ? `${s.highestWorkingDoctorName} (${s.highestWorkingDoctorAppointments} appointments total)`
-        : "No data.";
+    const totalUsers = (s.doctors || 0) + (s.patients || 0);
+    const doctorPct = totalUsers ? Math.round((s.doctors / totalUsers) * 100) : 0;
+    const patientPct = totalUsers ? Math.round((s.patients / totalUsers) * 100) : 0;
 
-    let widgets = `
+    const widgets = `
     <div class="row">
       <div class="col-md-6">
         <div class="widget">
-          <h5>Statistics</h5>
-          <ul>
-            <li>Doctors: <b>${s.doctors ?? "-"}</b></li>
-            <li>Patients: <b>${s.patients ?? "-"}</b></li>
-            <li>Appointments Today: <b>${s.appointmentsToday ?? "-"}</b></li>
-            <li>New Users This Month: <b>${s.newUsersThisMonth ?? "-"}</b></li>
-            <li>Highest Working Doctor: <b>${topDoctorText}</b></li>
+          <h5>Clinic Overview</h5>
+          <ul class="graph-list">
+            <li class="graph-item">
+              <span class="graph-item-label">Doctors</span>
+              <div class="graph-bar">
+                <div class="graph-bar-fill" style="width:${doctorPct}%;"></div>
+              </div>
+              <span>${s.doctors ?? 0}</span>
+            </li>
+            <li class="graph-item">
+              <span class="graph-item-label">Patients</span>
+              <div class="graph-bar">
+                <div class="graph-bar-fill" style="width:${patientPct}%;"></div>
+              </div>
+              <span>${s.patients ?? 0}</span>
+            </li>
+            <li class="graph-item">
+              <span class="graph-item-label">Appointments Today</span>
+              <span class="stats">${s.appointmentsToday ?? "-"}</span>
+            </li>
+            <li class="graph-item">
+              <span class="graph-item-label">New Users This Month</span>
+              <span class="stats">${s.newUsersThisMonth ?? "-"}</span>
+            </li>
           </ul>
         </div>
         <div class="widget">

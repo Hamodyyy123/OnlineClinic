@@ -1,4 +1,7 @@
-﻿// ====== PATIENT ADD/EDIT MODALS FOR LIST ======
+﻿// wwwroot/js/patient.js
+// Patient add/edit and medical history functions (updated add-button class + robust rendering)
+
+// ====== PATIENT ADD/EDIT MODALS FOR LIST ======
 function openCreatePatientModal() {
     $('#patientModalLabel').text('Add New Patient');
     $('#modalPatientId').val('');
@@ -16,41 +19,42 @@ function openCreatePatientModal() {
     $('#patientAdmissionDate').val('');
     $('#assignedDoctor').val('');
     $('#patientModal').modal('show');
-    $('#modalSaveBtn').off('click').on('click', function (e) {
-        e.preventDefault();
-        savePatient('create');
-    });
 }
 
 function openEditPatientModal(patientId) {
-    $.getJSON(`/Patients/GetPatientUser?patientId=${patientId}`, function (res) {
-        if (!res.success) {
-            $('#modal-error').removeClass('d-none').text('Failed to load patient.');
-            return;
-        }
-        var user = res.user;
-        var patient = res.patient;
-        $('#patientModalLabel').text('Edit Patient');
-        $('#modalPatientId').val(patient.patientId);
-        $('#modalUserId').val(user.userId);
-        $('#modal-error').addClass('d-none').text('');
-        $('#userName').val(user.name);
-        $('#userEmail').val(user.email);
-        $('#userUsername').val(user.username);
-        $('#userPassword').val(user.password);
-        $('#patientAge').val(patient.age);
-        $('#patientGender').val(patient.gender);
-        $('#patientContactInfo').val(patient.contactInfo);
-        $('#patientEmergencyContact').val(patient.emergencyContact);
-        $('#patientRoomNumber').val(patient.roomNumber);
-        $('#patientAdmissionDate').val(patient.admissionDate ? patient.admissionDate : '');
-        $('#assignedDoctor').val(patient.assignedDoctor);
-        $('#patientModal').modal('show');
-        $('#modalSaveBtn').off('click').on('click', function (e) {
-            e.preventDefault();
-            savePatient('edit');
+    $('#modal-error').addClass('d-none').text('');
+    $.getJSON(`/Patients/GetPatientUser?patientId=${patientId}`)
+        .done(function (res) {
+            if (!res || !res.success) {
+                $('#modal-error').removeClass('d-none').text(res?.message || 'Failed to load patient.');
+                return;
+            }
+            var user = res.user || {};
+            var patient = res.patient || {};
+            $('#patientModalLabel').text('Edit Patient');
+            $('#modalPatientId').val(patient.patientId || '');
+            $('#modalUserId').val(user.userId || '');
+            $('#userName').val(user.name || '');
+            $('#userEmail').val(user.email || '');
+            $('#userUsername').val(user.username || '');
+            $('#userPassword').val(user.password || '');
+            $('#patientAge').val(patient.age || '');
+            $('#patientGender').val(patient.gender || '');
+            $('#patientContactInfo').val(patient.contactInfo || '');
+            $('#patientEmergencyContact').val(patient.emergencyContact || '');
+            $('#patientRoomNumber').val(patient.roomNumber || '');
+            if (patient.admissionDate) {
+                var d = patient.admissionDate.split('T')[0];
+                $('#patientAdmissionDate').val(d);
+            } else {
+                $('#patientAdmissionDate').val('');
+            }
+            $('#assignedDoctor').val(patient.assignedDoctor || '');
+            $('#patientModal').modal('show');
+        })
+        .fail(function () {
+            $('#modal-error').removeClass('d-none').text('Server error loading patient.');
         });
-    });
 }
 
 function savePatient(mode) {
@@ -70,6 +74,7 @@ function savePatient(mode) {
         AdmissionDate: $('#patientAdmissionDate').val(),
         AssignedDoctor: $('#assignedDoctor').val()
     };
+
     var user = {
         UserId: payload.UserId,
         Name: payload.Name,
@@ -96,18 +101,28 @@ function savePatient(mode) {
         method: 'POST',
         data: { user: user, patient: patient },
         success: function (res) {
-            if (res.success) {
+            if (res && res.success) {
                 $('#patientModal').modal('hide');
                 location.reload();
             } else {
-                $('#modal-error').removeClass('d-none').text(res.message || 'Error occurred.');
+                $('#modal-error').removeClass('d-none').text(res?.message || 'Error occurred.');
             }
         },
-        error: function (err) {
+        error: function () {
             $('#modal-error').removeClass('d-none').text('Server error.');
         }
     });
 }
+
+// Attach form submit so "Save" (type=submit) works reliably
+$(function () {
+    $('#patientForm').on('submit', function (e) {
+        e.preventDefault();
+        var pid = $('#modalPatientId').val();
+        var mode = pid ? 'edit' : 'create';
+        savePatient(mode);
+    });
+});
 
 // ====== MEDICAL HISTORY MODALS FOR DETAILS VIEW ======
 function showMedicalHistory(patientId) {
@@ -125,24 +140,29 @@ function showMedicalHistory(patientId) {
                     <td>${h.notes || ''}</td>
                     ${canManage
                     ? `<td>
-                            <button class="btn btn-sm btn-warning" onclick="openEditMedicalHistory(${h.historyId}, ${patientId})">Edit</button>
+                                <button class="btn btn-sm btn-warning btn-edit-mh" onclick="openEditMedicalHistory(${h.historyId}, ${patientId})">Edit</button>
                            </td>`
                     : '<td></td>'
                 }
                 </tr>
             `).join('');
-            let addBtn = canManage ? `<button class="btn btn-success mb-2" onclick="openEditMedicalHistory(0, ${patientId})">Add Medical History</button>` : '';
+            let addBtn = canManage ? `<button class="btn btn-success mb-3 btn-add-mh" onclick="openEditMedicalHistory(0, ${patientId})">Add Medical History</button>` : '';
             $('#medicalHistoryModalBody').html(`
-                ${addBtn}
-                <table class="table table-bordered">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    ${addBtn}
+                    <div class="text-muted small">Total records: ${(data || []).length}</div>
+                </div>
+                <div class="table-responsive">
+                <table class="table medical-history-table">
                     <thead>
                         <tr><th>Date</th><th>Diagnosis</th><th>Description</th><th>Notes</th><th></th></tr>
                     </thead>
                     <tbody>${rows}</tbody>
                 </table>
+                </div>
             `);
         })
-        .catch(err => {
+        .catch(() => {
             $('#medicalHistoryModalBody').html('<div class="text-danger">Failed to load medical history.</div>');
         });
 }
@@ -154,21 +174,23 @@ function openEditMedicalHistory(historyId, patientId) {
     $('#mh-id').val('');
     $('#mh-patient-id').val(patientId);
     if (historyId && historyId > 0) {
-        // Edit
         $('#medicalHistoryEditModalLabel').text('Edit Medical History');
         fetch(`/Patients/GetMedicalHistoryItem?id=${historyId}`)
             .then(resp => resp.json())
             .then(res => {
-                if (!res.success) return;
+                if (!res || !res.success) {
+                    $('#mh-error').removeClass('d-none').text(res?.message || 'Failed to load item.');
+                    return;
+                }
                 $('#mh-id').val(res.item.historyId);
                 $('#mh-date').val(res.item.startDate ? res.item.startDate.split('T')[0] : '');
                 $('#mh-diagnosis').val(res.item.diagnosis || '');
                 $('#mh-description').val(res.item.description || '');
                 $('#mh-notes').val(res.item.notes || '');
                 $('#medicalHistoryEditModal').modal('show');
-            });
+            })
+            .catch(() => $('#mh-error').removeClass('d-none').text('Server error.'));
     } else {
-        // Add
         $('#medicalHistoryEditModalLabel').text('Add Medical History');
         $('#mh-id').val('');
         $('#mh-date').val('');
@@ -193,13 +215,14 @@ $(function () {
             notes: $('#mh-notes').val()
         };
         $.post('/Patients/SaveMedicalHistory', payload, function (res) {
-            if (res.success) {
+            if (res && res.success) {
                 $('#medicalHistoryEditModal').modal('hide');
-                // Refresh history in parent modal
                 showMedicalHistory(payload.patientId);
             } else {
-                $('#mh-error').removeClass('d-none').text(res.message || 'Failed to save.');
+                $('#mh-error').removeClass('d-none').text(res?.message || 'Failed to save.');
             }
+        }).fail(function () {
+            $('#mh-error').removeClass('d-none').text('Server error.');
         });
     });
 });
